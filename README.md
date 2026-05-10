@@ -163,6 +163,27 @@ edit code in VSCode
 
 > Note: service worker and PWA install prompt only work on HTTPS (tofutopia.net), not on localhost. Everything else works locally.
 
+### Baby Announcement Page
+
+The baby announcement page is set up for Vercel hosting:
+
+- Guest page: `/baby.html`
+- Hidden feedback review page: `/baby-admin.html`
+- Feedback API route: `/api/baby-feedback`
+
+The API route stores messages in Redis. In Vercel, add an Upstash Redis
+database from Marketplace Storage so these environment variables are available:
+
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+
+The API also supports the older Vercel KV variable names:
+
+- `KV_REST_API_URL`
+- `KV_REST_API_TOKEN`
+
+After that, pushing to GitHub will redeploy the page and feedback API.
+
 ---
 
 ## Roadmap
