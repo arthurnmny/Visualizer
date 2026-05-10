@@ -171,8 +171,13 @@ The baby announcement page is set up for Vercel hosting:
 - Hidden feedback review page: `/baby-admin.html`
 - Feedback API route: `/api/baby-feedback`
 
-The API route stores messages in Vercel KV. In Vercel, add a KV/Redis
-database to the project so these environment variables are available:
+The API route stores messages in Redis. In Vercel, add an Upstash Redis
+database from Marketplace Storage so these environment variables are available:
+
+- `UPSTASH_REDIS_REST_URL`
+- `UPSTASH_REDIS_REST_TOKEN`
+
+The API also supports the older Vercel KV variable names:
 
 - `KV_REST_API_URL`
 - `KV_REST_API_TOKEN`

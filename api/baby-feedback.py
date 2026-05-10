@@ -101,11 +101,11 @@ def clean_text(value: object, limit: int) -> str:
 
 
 def kv_env() -> tuple[str, str]:
-    url = os.environ.get("KV_REST_API_URL")
-    token = os.environ.get("KV_REST_API_TOKEN")
+    url = os.environ.get("KV_REST_API_URL") or os.environ.get("UPSTASH_REDIS_REST_URL")
+    token = os.environ.get("KV_REST_API_TOKEN") or os.environ.get("UPSTASH_REDIS_REST_TOKEN")
 
     if not url or not token:
-        raise RuntimeError("Vercel KV is not configured")
+        raise RuntimeError("Redis storage is not configured")
 
     return url.rstrip("/"), token
 
