@@ -178,7 +178,9 @@
       countLabel.textContent = 'Loading...';
 
       try {
-        const response = await fetch('/api/baby-feedback');
+        const response = await fetch(`/api/baby-feedback?ts=${Date.now()}`, {
+          cache: 'no-store',
+        });
 
         if (!response.ok) throw new Error('Unable to load messages');
 
