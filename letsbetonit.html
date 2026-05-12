@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Let's Bet On It</title>
+  <style>
+    :root {
+      --ink: #202124;
+      --muted: #686f75;
+      --line: #d9d4cc;
+      --paper: #fffaf2;
+      --accent: #8f6f52;
+      --accent-light: #f0e6da;
+      --danger: #c0392b;
+      --success: #2d7a4f;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+    }
+
+    .page {
+      width: min(760px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 32px 0 72px;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 22px;
+      margin-bottom: 28px;
+      position: relative;
+    }
+
+    header {
+      border-bottom: 1px solid var(--line);
+      padding-bottom: 22px;
+      margin-bottom: 28px;
+      position: relative;
+      padding-right: 140px;
+    }
+
+    .top-right-jokes {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .top-right-jokes img,
+    .top-right-jokes .tenor-gif-embed {
+      width: 96px;
+      max-width: 96px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.08);
+      box-shadow: 0 12px 20px rgba(0,0,0,.08);
+      background: white;
+      display: block;
+      overflow: hidden;
+    }
+
+    .top-right-jokes .tenor-gif-embed {
+      padding: 0;
+      min-height: 96px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 6vw, 3.6rem);
+      line-height: 1.05;
+    }
+
+    header p {
+      margin: 8px 0 0;
+      color: var(--muted);
+    }
+
+    /* ── Chip bank ── */
+    .chip-bank {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.55);
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      position: sticky;
+      top: 12px;
+      z-index: 10;
+    }
+
+    .chip-bank__label {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .chip-bank__total {
+      font-size: 2rem;
+      font-weight: 700;
+      line-height: 1;
+      color: var(--accent);
+      min-width: 3ch;
+    }
+
+    .chip-bank__total.low { color: var(--danger); }
+
+    .chip-bank__chips {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chip {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent);
+      border: 2px dashed #fff;
+      box-shadow: 0 0 0 2px var(--accent);
+      transition: opacity 0.2s, background 0.2s;
+    }
+
+    .chip.spent {
+      background: var(--line);
+      box-shadow: 0 0 0 2px var(--line);
+    }
+
+    /* ── Name field ── */
+    .name-row {
+      margin-bottom: 28px;
+    }
+
+    .name-row label {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .name-row input {
+      width: 100%;
+      max-width: 360px;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 1rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.7);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .name-row input:focus { border-color: var(--accent); }
+
+    /* ── Questions ── */
+    .questions { display: grid; gap: 16px; }
+
+    .question {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.45);
+      padding: 20px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .question__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .question__label {
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .question__sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    /* Wager control */
+    .wager {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      flex-shrink: 0;
+    }
+
+    .wager__btn {
+      width: 36px;
+      height: 36px;
+      min-height: unset;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      user-select: none;
+      padding: 0;
+      transition: background 0.15s;
+    }
+
+    .wager__btn:hover { background: #7a5c42; }
+    .wager__btn:disabled { background: var(--line); border-color: var(--line); cursor: not-allowed; }
+
+    .wager__value {
+      width: 48px;
+      text-align: center;
+      font-weight: 700;
+      font-size: 1rem;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      border-left: none;
+      border-right: none;
+      height: 36px;
+      line-height: 36px;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    /* Answer inputs */
+    .question input[type="text"],
+    .question input[type="date"],
+    .question input[type="number"] {
+      width: 100%;
+      padding: 9px 13px;
+      font: inherit;
+      font-size: 0.95rem;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.7);
+      color: var(--ink);
+      outline: none;
+    }
+
+    .question input:focus { border-color: var(--accent); }
+
+    .radio-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.6);
+      cursor: pointer;
+      font-size: 0.9rem;
+      transition: background 0.15s, border-color 0.15s;
+      user-select: none;
+    }
+
+    .radio-group input[type="radio"] { display: none; }
+
+    .radio-group label.selected {
+      background: var(--accent-light);
+      border-color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* ── Submit ── */
+    .submit-row {
+      margin-top: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .submit-btn {
+      min-height: 48px;
+      padding: 0 32px;
+      font: inherit;
+      font-size: 1rem;
+      font-weight: 700;
+      background: var(--accent);
+      border: 1px solid var(--accent);
+      color: #fff;
+      cursor: pointer;
+      letter-spacing: 0.04em;
+      transition: background 0.15s;
+    }
+
+    .submit-btn:hover { background: #7a5c42; }
+    .submit-btn:disabled { background: var(--line); border-color: var(--line); cursor: not-allowed; }
+
+    .status {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .status.ok  { color: var(--success); font-weight: 700; }
+    .status.err { color: var(--danger);  font-weight: 700; }
+
+    /* ── Chips remaining warning ── */
+    .chips-warning {
+      font-size: 0.82rem;
+      color: var(--danger);
+      display: none;
+    }
+    .chips-warning.show { display: block; }
+
+    @media (max-width: 600px) {
+      .question__top { flex-direction: column; }
+      .chip-bank { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+<body>
+<main class="page">
+
+  <header>
+    <h1>Let's Bet On It </h1>
+    <p>Place your chips. The house always wins, but the baby decides.</p>
+    <div class="top-right-jokes">
+      <img src="/assets/baby/adam.jpg" alt="Adam" />
+      <div class="tenor-gif-embed" data-postid="4952797" data-share-method="host" data-aspect-ratio="2.41" data-width="100%">
+        <a href="https://tenor.com/view/bet-bet-it-all-all-in-rounders-john-malkovich-gif-4952797">I Bet It All - Rounders GIF</a> from <a href="https://tenor.com/search/bet-gifs">Bet GIFs</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Sticky chip bank -->
+  <div class="chip-bank">
+    <div>
+      <div class="chip-bank__label">Chips remaining</div>
+      <div class="chip-bank__total" id="chips-remaining">100</div>
+    </div>
+    <div class="chip-bank__chips" id="chip-display"></div>
+  </div>
+
+  <!-- Name -->
+  <div class="name-row">
+    <label for="bettor-name">Your name</label>
+    <input type="text" id="bettor-name" placeholder="First name is fine" autocomplete="off" />
+  </div>
+
+  <!-- Questions -->
+  <div class="questions">
+
+    <!-- Q1: Delivery date -->
+    <div class="question" data-q="1">
+      <div class="question__top">
+        <div>
+          <div class="question__label"> Delivery date</div>
+          <div class="question__sub">Pick the date you think baby arrives</div>
+        </div>
+        <div class="wager">
+          <button class="wager__btn" data-dir="-1" data-q="1">−</button>
+          <div class="wager__value" id="wager-1">0</div>
+          <button class="wager__btn" data-dir="1" data-q="1">+</button>
+        </div>
+      </div>
+      <input type="date" id="q1-response" />
+    </div>
+
+    <!-- Q2: Baby weight -->
+    <div class="question" data-q="2">
+      <div class="question__top">
+        <div>
+          <div class="question__label"> Baby weight</div>
+          <div class="question__sub">Guess in pounds and ounces (e.g. 7 lbs 4 oz)</div>
+        </div>
+        <div class="wager">
+          <button class="wager__btn" data-dir="-1" data-q="2">−</button>
+          <div class="wager__value" id="wager-2">0</div>
+          <button class="wager__btn" data-dir="1" data-q="2">+</button>
+        </div>
+      </div>
+      <input type="text" id="q2-response" placeholder="e.g. 7 lbs 4 oz" />
+    </div>
+
+    <!-- Q3: First words (multiple choice) -->
+    <div class="question" data-q="3">
+      <div class="question__top">
+        <div>
+          <div class="question__label">💬 Baby's first words</div>
+          <div class="question__sub">Pick the most likely debut</div>
+        </div>
+        <div class="wager">
+          <button class="wager__btn" data-dir="-1" data-q="3">−</button>
+          <div class="wager__value" id="wager-3">0</div>
+          <button class="wager__btn" data-dir="1" data-q="3">+</button>
+        </div>
+      </div>
+      <div class="radio-group" id="q3-response">
+        <label><input type="radio" name="q3" value="Mama" /><span>Mama</span></label>
+        <label><input type="radio" name="q3" value="Dada" /><span>Dada</span></label>
+        <label><input type="radio" name="q3" value="Baba" /><span>No</span></label>
+        <label><input type="radio" name="q3" value="Umma" /><span>Uh oh</span></label>
+        <label><input type="radio" name="q3" value="Dog" /><span>Dog</span></label>
+        <label><input type="radio" name="q3" value="Cat" /><span>Ball</span></label>
+        <label><input type="radio" name="q3" value="Something unhinged" /><span>Let's transform unstructured data into actionable business insights to drive sharholder value</span></label>
+      </div>
+    </div>
+
+    <!-- Q4: Baby name -->
+    <div class="question" data-q="4">
+      <div class="question__top">
+        <div>
+          <div class="question__label"> Guess the name</div>
+          <div class="question__sub">What do you think they'll be called?</div>
+        </div>
+        <div class="wager">
+          <button class="wager__btn" data-dir="-1" data-q="4">−</button>
+          <div class="wager__value" id="wager-4">0</div>
+          <button class="wager__btn" data-dir="1" data-q="4">+</button>
+        </div>
+      </div>
+      <input type="text" id="q4-response" placeholder="First name, middle name, or nickname?" />
+    </div>
+
+    <!-- Q5: Mutant super power -->
+    <div class="question" data-q="5">
+      <div class="question__top">
+        <div>
+          <div class="question__label"> Mutant super power</div>
+          <div class="question__sub">What power does this baby secretly have?</div>
+        </div>
+        <div class="wager">
+          <button class="wager__btn" data-dir="-1" data-q="5">−</button>
+          <div class="wager__value" id="wager-5">0</div>
+          <button class="wager__btn" data-dir="1" data-q="5">+</button>
+        </div>
+      </div>
+      <input type="text" id="q5-response" placeholder="e.g. Can summon snacks telepathically, atomic farts, supersonic screams " />
+    </div>
+
+  </div>
+
+  <!-- Submit -->
+  <div class="submit-row">
+    <button class="submit-btn" id="submit-btn">Place bets</button>
+    <span class="status" id="status"></span>
+  </div>
+  <div class="chips-warning" id="chips-warning">
+    You have unspent chips! You don't have to use them all, but are you sure?
+  </div>
+
+</main>
+
+<script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+<script>
+  const TOTAL_CHIPS = 100;
+  const STEP = 5;
+  const wagers = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+
+  // ── Chip display ──
+  const chipDisplay   = document.getElementById('chip-display');
+  const chipsRemEl    = document.getElementById('chips-remaining');
+  const chipsWarning  = document.getElementById('chips-warning');
+
+  function buildChips() {
+    chipDisplay.innerHTML = '';
+    for (let i = 0; i < 20; i++) {
+      const c = document.createElement('div');
+      c.className = 'chip';
+      c.id = `chip-${i}`;
+      chipDisplay.appendChild(c);
+    }
+  }
+  buildChips();
+
+  function spent() { return Object.values(wagers).reduce((a, b) => a + b, 0); }
+  function remaining() { return TOTAL_CHIPS - spent(); }
+
+  function updateChipUI() {
+    const rem = remaining();
+    chipsRemEl.textContent = rem;
+    chipsRemEl.className   = 'chip-bank__total' + (rem <= 15 ? ' low' : '');
+
+    // each chip dot = 5 chips
+    const spentDots = Math.round(spent() / 5);
+    document.querySelectorAll('.chip').forEach((c, i) => {
+      c.classList.toggle('spent', i < spentDots);
+    });
+
+    // update all wager buttons
+    document.querySelectorAll('.wager__btn').forEach(btn => {
+      const dir = parseInt(btn.dataset.dir);
+      const q   = btn.dataset.q;
+      if (dir === 1)  btn.disabled = remaining() < STEP;
+      if (dir === -1) btn.disabled = wagers[q] <= 0;
+    });
+  }
+
+  // ── Wager buttons ──
+  document.querySelectorAll('.wager__btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const q   = btn.dataset.q;
+      const dir = parseInt(btn.dataset.dir);
+      if (dir === 1 && remaining() >= STEP) {
+        wagers[q] += STEP;
+      } else if (dir === -1 && wagers[q] >= STEP) {
+        wagers[q] -= STEP;
+      }
+      document.getElementById(`wager-${q}`).textContent = wagers[q];
+      updateChipUI();
+    });
+  });
+
+  // ── Radio group highlight ──
+  document.querySelectorAll('.radio-group').forEach(group => {
+    group.querySelectorAll('label').forEach(lbl => {
+      lbl.addEventListener('click', () => {
+        group.querySelectorAll('label').forEach(l => l.classList.remove('selected'));
+        lbl.classList.add('selected');
+      });
+    });
+  });
+
+  // ── Submit ──
+  document.getElementById('submit-btn').addEventListener('click', async () => {
+    const name = document.getElementById('bettor-name').value.trim();
+    if (!name) { setStatus('Please enter your name first.', 'err'); return; }
+
+    const q3radio = document.querySelector('input[name="q3"]:checked');
+
+    const payload = {
+      name,
+      q1chips:    wagers[1], q1response: document.getElementById('q1-response').value.trim(),
+      q2chips:    wagers[2], q2response: document.getElementById('q2-response').value.trim(),
+      q3chips:    wagers[3], q3response: q3radio ? q3radio.value : '',
+      q4chips:    wagers[4], q4response: document.getElementById('q4-response').value.trim(),
+      q5chips:    wagers[5], q5response: document.getElementById('q5-response').value.trim(),
+    };
+
+    // warn if chips left over but don't block
+    chipsWarning.classList.toggle('show', remaining() > 0);
+
+    setStatus('Placing bets…', '');
+    document.getElementById('submit-btn').disabled = true;
+
+    try {
+      const res = await fetch('/api/bets', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      setStatus('Bets placed! Good luck 🍀', 'ok');
+    } catch (e) {
+      setStatus('Something went wrong: ' + e.message, 'err');
+      document.getElementById('submit-btn').disabled = false;
+    }
+  });
+
+  function setStatus(msg, type) {
+    const el = document.getElementById('status');
+    el.textContent  = msg;
+    el.className    = 'status' + (type ? ' ' + type : '');
+  }
+
+  updateChipUI();
+</script>
+</body>
+</html>
