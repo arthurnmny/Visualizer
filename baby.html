@@ -95,6 +95,12 @@
       text-align: center;
     }
 
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
     .registry-card, .form-wrap {
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.45);
@@ -177,19 +183,23 @@
       <p class="eyebrow">A little announcement</p>
       <h1>Our family is growing.</h1>
       <p>
-        We are so happy to share that a new baby is on the way. This page will
-        become the home for photos, notes, registry links, and messages from the
-        people we love.
+        We are happy to share that a new baby is on the way! This page is to help share our joy and excitement with people we love.
       </p>
     </header>
 
     <section aria-labelledby="message-heading">
-      <p class="eyebrow">A note from us</p>
-      <h2 id="message-heading">Words for this season</h2>
+      <p class="eyebrow">I read a lot of poetry this year, so now you have to as well</p>
+      <h2 id="message-heading">A Flower Given to My Daughter by James Joyce</h2>
       <p>
-        Replace this paragraph with your announcement note, due date details,
-        names if you want to share them, or anything tender and true that belongs
-        here.
+Frail the white rose and frail are <br>
+Her hands that gave<br>
+Whose soul is sere and paler<br>
+Than time’s wan wave.<br>
+<br>
+Rosefrail and fair – yet frailest<br>
+A wonder wild<br>
+In gentle eyes thou veilest,<br>
+My blueveined child.<br>
       </p>
     </section>
 
@@ -198,15 +208,15 @@
       <h2 id="photos-heading">Ultrasound and baby photos</h2>
       <div class="media-grid">
         <div class="photo-slot featured">
-          <div class="photo-placeholder">
+          <div class="assets/baby/first.jpeg">
             Current ultrasound<br />
             Add an image at assets/baby/current-ultrasound.jpg
           </div>
         </div>
-        <div class="photo-slot"><div class="photo-placeholder">Baby photo 1</div></div>
-        <div class="photo-slot"><div class="photo-placeholder">Baby photo 2</div></div>
-        <div class="photo-slot"><div class="photo-placeholder">Baby photo 3</div></div>
-        <div class="photo-slot"><div class="photo-placeholder">Baby photo 4</div></div>
+        <div class="photo-slot"><img src="assets/baby/engage.jpeg" alt="Baby photo 1"></div>
+        <div class="photo-slot"><img src="assets/baby/wed.jpeg" alt="Baby photo 2"></div>
+        <div class="photo-slot"><img src="assets/baby/ultra.jpeg" alt="Baby photo 3"></div>
+        <div class="photo-slot"><img src="assets/baby/ai.jpeg" alt="Ultra photo"></div>
       </div>
     </section>
 
@@ -215,15 +225,16 @@
       <h2 id="registry-heading">Registry links</h2>
       <div class="grid">
         <article class="registry-card">
-          <h3>Babylist</h3>
-          <p>Add the public registry URL when it is ready.</p>
-          <a class="button" href="#">Open registry</a>
+          <h3>Gift Registry</h3>
+          <p>This is a Amazon list, but you<br>
+            don't need to buy it from here</p>
+          <a class="button" href="https://www.amazon.com/baby-reg/arthur-yang-hallie-cho-june-2026-bainbridgeisland/4YX23TYNKQAI ">Open Registry</a>
         </article>
-        <article class="registry-card">
+        <!-- <article class="registry-card">
           <h3>Target</h3>
           <p>Add another registry or wishlist link here.</p>
           <a class="button" href="#">Open registry</a>
-        </article>
+        </article> -->
       </div>
     </section>
 
