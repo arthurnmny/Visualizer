@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet"/>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #fff;
+    color: #111;
+    font-family: 'Noto Sans JP', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .page {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  .left {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-right: 3px solid #111;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .dots-bg {
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(circle, #ddd 1px, transparent 1px);
+    background-size: 20px 20px;
+    opacity: 0.4;
+  }
+
+  .scene-svg { position: relative; z-index: 2; }
+
+  .right {
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .table-scene {
+    position: relative;
+    width: 420px;
+    height: 480px;
+  }
+
+  .table-surface {
+    position: absolute;
+    bottom: 60px;
+    left: 0; right: 0;
+    height: 12px;
+    background: #111;
+    border-radius: 2px;
+  }
+
+  .table-leg-left {
+    position: absolute;
+    bottom: 0;
+    left: 40px;
+    width: 10px;
+    height: 65px;
+    background: #111;
+    border-radius: 2px;
+  }
+
+  .table-leg-right {
+    position: absolute;
+    bottom: 0;
+    right: 40px;
+    width: 10px;
+    height: 65px;
+    background: #111;
+    border-radius: 2px;
+  }
+
+  .obj {
+    position: absolute;
+    transition: transform 0.05s linear;
+    transform-origin: bottom center;
+  }
+
+  .projects-container {
+    position: absolute;
+    bottom: 72px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 32px;
+    align-items: flex-end;
+    width: 360px;
+    justify-content: center;
+  }
+
+  .project {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 15px;
+    color: #111;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+    transition: font-size 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), font-weight 0.1s;
+    line-height: 1.2;
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .project:hover { font-size: 26px; font-weight: 700; }
+
+  .project::after {
+    content: '';
+    display: block;
+    height: 2px;
+    background: #111;
+    margin-top: 3px;
+    transform: scaleX(0);
+    transition: transform 0.2s;
+  }
+
+  .project:hover::after { transform: scaleX(1); }
+
+  @keyframes blink1 { 0%,100%{opacity:1} 33%{opacity:0.2} }
+  @keyframes blink2 { 0%,33%{opacity:1} 66%{opacity:0.2} 100%{opacity:1} }
+  @keyframes blink3 { 0%,66%{opacity:1} 100%{opacity:0.2} }
+  .dot1 { animation: blink1 1.2s infinite; }
+  .dot2 { animation: blink2 1.2s infinite; }
+  .dot3 { animation: blink3 1.2s infinite; }
+
+  @keyframes type-arms {
+    0%   { transform: translateY(0px); }
+    25%  { transform: translateY(-3px); }
+    50%  { transform: translateY(0px); }
+    75%  { transform: translateY(-2px); }
+    100% { transform: translateY(0px); }
+  }
+  #left-arm  { animation: type-arms 0.4s infinite ease-in-out; }
+  #right-arm { animation: type-arms 0.4s 0.2s infinite ease-in-out; }
+
+  @keyframes screen-flicker {
+    0%, 95%, 100% { opacity: 1; }
+    96% { opacity: 0.85; }
+  }
+  #laptop-screen { animation: screen-flicker 4s infinite; }
+
+  @keyframes knock-right    { 0%{transform:rotate(0deg)} 30%{transform:rotate(-25deg) translateX(8px)} 60%{transform:rotate(-60deg) translateX(18px)} 100%{transform:rotate(-85deg) translateX(28px) translateY(6px)} }
+  @keyframes knock-left     { 0%{transform:rotate(0deg)} 30%{transform:rotate(25deg) translateX(-8px)} 60%{transform:rotate(60deg) translateX(-18px)} 100%{transform:rotate(85deg) translateX(-28px) translateY(6px)} }
+  @keyframes knock-far      { 0%{transform:rotate(0deg) translateX(0)} 100%{transform:rotate(-90deg) translateX(35px) translateY(8px)} }
+  @keyframes knock-bounce   { 0%{transform:translateY(0) rotate(0deg)} 30%{transform:translateY(-20px) rotate(-15deg)} 60%{transform:translateY(5px) rotate(10deg)} 80%{transform:translateY(-8px) rotate(-5deg)} 100%{transform:translateY(0) rotate(8deg) translateX(20px)} }
+  @keyframes scatter        { 0%{transform:rotate(0deg) translateX(0)} 100%{transform:rotate(180deg) translateX(30px) translateY(-10px)} }
+
+  .knocked-right-slow { animation: knock-right  0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+  .knocked-left-slow  { animation: knock-left   0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+  .knocked-far        { animation: knock-far    0.5s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+  .knocked-bounce     { animation: knock-bounce 0.7s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+  .knocked-scatter    { animation: scatter      0.6s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
+
+  .counter-badge {
+    position: absolute;
+    top: -6px; right: -10px;
+    font-size: 9px;
+    font-family: monospace;
+    color: #888;
+    background: #f0f0f0;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 0 4px;
+    pointer-events: none;
+  }
+
+  .exhausted { color: #bbb; cursor: default; font-style: italic; }
+  .exhausted::after { display: none; }
+
+  .manga-border {
+    position: absolute;
+    inset: 8px;
+    border: 3px solid #111;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .section-label {
+    position: absolute;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #ccc;
+    text-transform: uppercase;
+    z-index: 11;
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- LEFT: character -->
+  <div class="left">
+    <div class="dots-bg"></div>
+    <div class="manga-border"></div>
+    <div class="section-label" style="top:20px;left:24px;">[ about ]</div>
+
+    <svg class="scene-svg" width="280" height="380" viewBox="0 0 280 380">
+      <!-- speech bubble -->
+      <rect x="60" y="10" width="110" height="46" rx="10" fill="white" stroke="#111" stroke-width="2.5"/>
+      <polygon points="85,56 100,56 92,70" fill="white" stroke="#111" stroke-width="2.5" stroke-linejoin="round"/>
+      <polygon points="87,55 99,55 92,68" fill="white" stroke="white" stroke-width="1"/>
+      <text class="dot1" x="82" y="38" font-size="22" fill="#111">.</text>
+      <text class="dot2" x="108" y="38" font-size="22" fill="#111">.</text>
+      <text class="dot3" x="134" y="38" font-size="22" fill="#111">.</text>
+
+      <!-- speed lines -->
+      <line x1="280" y1="0" x2="200" y2="60" stroke="#eee" stroke-width="1"/>
+      <line x1="280" y1="20" x2="220" y2="70" stroke="#eee" stroke-width="1"/>
+      <line x1="280" y1="40" x2="240" y2="80" stroke="#eee" stroke-width="1"/>
+
+      <!-- couch seat -->
+      <rect x="20" y="270" width="240" height="55" rx="8" fill="#f5f5f5" stroke="#111" stroke-width="2.5"/>
+      <!-- couch back -->
+      <rect x="20" y="215" width="240" height="60" rx="8" fill="#f5f5f5" stroke="#111" stroke-width="2.5"/>
+      <!-- armrests -->
+      <rect x="10" y="225" width="28" height="90" rx="8" fill="#f5f5f5" stroke="#111" stroke-width="2.5"/>
+      <rect x="242" y="225" width="28" height="90" rx="8" fill="#f5f5f5" stroke="#111" stroke-width="2.5"/>
+      <line x1="140" y1="270" x2="140" y2="325" stroke="#ddd" stroke-width="1.5"/>
+
+      <!-- coffee table -->
+      <rect x="60" y="325" width="160" height="8" rx="2" fill="#111"/>
+      <line x1="80" y1="333" x2="80" y2="355" stroke="#111" stroke-width="3"/>
+      <line x1="200" y1="333" x2="200" y2="355" stroke="#111" stroke-width="3"/>
+
+      <!-- laptop screen -->
+      <rect x="88" y="298" width="104" height="68" rx="4" fill="#111" stroke="#111" stroke-width="2"/>
+      <rect id="laptop-screen" x="92" y="302" width="96" height="58" rx="2" fill="#1a1a2e"/>
+      <line x1="98" y1="312" x2="150" y2="312" stroke="#4ade80" stroke-width="1.5"/>
+      <line x1="98" y1="320" x2="170" y2="320" stroke="#60a5fa" stroke-width="1.5"/>
+      <line x1="98" y1="328" x2="140" y2="328" stroke="#4ade80" stroke-width="1.5"/>
+      <line x1="98" y1="336" x2="160" y2="336" stroke="#60a5fa" stroke-width="1.5"/>
+      <line x1="98" y1="344" x2="130" y2="344" stroke="#f9a8d4" stroke-width="1.5"/>
+      <rect id="cursor" x="131" y="340" width="6" height="10" fill="#f9a8d4">
+        <animate attributeName="opacity" values="1;0;1" dur="0.8s" repeatCount="indefinite"/>
+      </rect>
+      <!-- laptop base -->
+      <rect x="76" y="362" width="128" height="8" rx="2" fill="#222" stroke="#111" stroke-width="1.5"/>
+
+      <!-- head -->
+      <circle cx="140" cy="178" r="28" fill="white" stroke="#111" stroke-width="2.5"/>
+      <!-- hair -->
+      <path d="M113 168 Q115 145 140 140 Q165 145 167 168" fill="#111" stroke="#111" stroke-width="1.5"/>
+      <path d="M113 168 Q108 155 115 145" fill="#111" stroke="#111" stroke-width="1.5"/>
+      <path d="M167 168 Q172 155 165 145" fill="#111" stroke="#111" stroke-width="1.5"/>
+      <!-- ears -->
+      <ellipse cx="112" cy="180" rx="5" ry="7" fill="white" stroke="#111" stroke-width="2"/>
+      <ellipse cx="168" cy="180" rx="5" ry="7" fill="white" stroke="#111" stroke-width="2"/>
+      <!-- eyes -->
+      <ellipse cx="129" cy="180" rx="6" ry="7" fill="#111"/>
+      <ellipse cx="151" cy="180" rx="6" ry="7" fill="#111"/>
+      <circle cx="131" cy="178" r="2" fill="white"/>
+      <circle cx="153" cy="178" r="2" fill="white"/>
+      <!-- eyebrows -->
+      <path d="M122 170 Q129 167 136 170" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M144 170 Q151 167 158 170" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <!-- mouth -->
+      <path d="M133 192 Q140 197 147 192" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+      <!-- torso -->
+      <path d="M115 205 Q140 210 165 205 L170 270 L110 270 Z" fill="white" stroke="#111" stroke-width="2.5"/>
+      <line x1="140" y1="210" x2="140" y2="265" stroke="#eee" stroke-width="1.5"/>
+
+      <!-- left arm -->
+      <g id="left-arm">
+        <path d="M118 220 Q95 250 98 298" stroke="#111" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M118 220 Q95 250 98 298" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M118 220 Q95 250 98 298" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="100" cy="303" rx="9" ry="6" fill="white" stroke="#111" stroke-width="2"/>
+      </g>
+
+      <!-- right arm -->
+      <g id="right-arm">
+        <path d="M162 220 Q185 250 182 298" stroke="#111" stroke-width="9" fill="none" stroke-linecap="round"/>
+        <path d="M162 220 Q185 250 182 298" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <path d="M162 220 Q185 250 182 298" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <ellipse cx="180" cy="303" rx="9" ry="6" fill="white" stroke="#111" stroke-width="2"/>
+      </g>
+
+      <!-- legs -->
+      <path d="M115 268 Q105 295 108 325" stroke="#111" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <path d="M115 268 Q105 295 108 325" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M115 268 Q105 295 108 325" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M165 268 Q175 295 172 325" stroke="#111" stroke-width="9" fill="none" stroke-linecap="round"/>
+      <path d="M165 268 Q175 295 172 325" stroke="white" stroke-width="5" fill="none" stroke-linecap="round"/>
+      <path d="M165 268 Q175 295 172 325" stroke="#111" stroke-width="2" fill="none" stroke-linecap="round"/>
+
+      <!-- shoes -->
+      <ellipse cx="110" cy="328" rx="14" ry="8" fill="#111"/>
+      <ellipse cx="172" cy="328" rx="14" ry="8" fill="#111"/>
+    </svg>
+  </div>
+
+  <!-- RIGHT: table scene -->
+  <div class="right">
+    <div class="manga-border"></div>
+    <div class="section-label" style="top:20px;right:24px;">[ work ]</div>
+
+    <div class="table-scene">
+
+      <!-- MUG -->
+      <div class="obj" id="obj-mug" style="position:absolute;bottom:72px;left:30px;transform-origin:bottom center;">
+        <svg width="36" height="52" viewBox="0 0 36 52">
+          <rect x="4" y="10" width="24" height="28" rx="3" fill="white" stroke="#111" stroke-width="2.5"/>
+          <path d="M28 18 Q38 18 38 24 Q38 30 28 30" fill="none" stroke="#111" stroke-width="2.5"/>
+          <ellipse cx="16" cy="10" rx="12" ry="4" fill="#f5f5f5" stroke="#111" stroke-width="2"/>
+          <path d="M10 20 Q16 16 22 20" stroke="#aaa" stroke-width="1.5" fill="none"/>
+          <path d="M10 6 Q12 2 10 0" stroke="#ccc" stroke-width="1.5" fill="none"/>
+          <path d="M16 6 Q18 2 16 0" stroke="#ccc" stroke-width="1.5" fill="none"/>
+          <path d="M22 6 Q24 2 22 0" stroke="#ccc" stroke-width="1.5" fill="none"/>
+        </svg>
+      </div>
+
+      <!-- PLANT -->
+      <div class="obj" id="obj-plant" style="position:absolute;bottom:72px;left:2px;transform-origin:bottom center;">
+        <svg width="30" height="55" viewBox="0 0 30 55">
+          <rect x="6" y="40" width="18" height="14" rx="2" fill="#f5f5f5" stroke="#111" stroke-width="2"/>
+          <line x1="15" y1="40" x2="15" y2="20" stroke="#111" stroke-width="2"/>
+          <ellipse cx="15" cy="20" rx="10" ry="14" fill="white" stroke="#111" stroke-width="2"/>
+          <path d="M8 18 Q15 10 22 18" fill="white" stroke="#111" stroke-width="1.5"/>
+          <line x1="10" y1="16" x2="20" y2="20" stroke="#ddd" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- PENCIL -->
+      <div class="obj" id="obj-pencil" style="position:absolute;bottom:72px;right:28px;transform-origin:bottom center;">
+        <svg width="14" height="60" viewBox="0 0 14 60">
+          <rect x="3" y="4" width="8" height="46" rx="2" fill="white" stroke="#111" stroke-width="2"/>
+          <polygon points="3,50 11,50 7,60" fill="#111"/>
+          <rect x="3" y="4" width="8" height="8" rx="2" fill="#f5f5f5" stroke="#111" stroke-width="2"/>
+          <line x1="7" y1="57" x2="7" y2="60" stroke="#e2c96a" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <!-- BOOKS -->
+      <div class="obj" id="obj-books" style="position:absolute;bottom:72px;right:55px;transform-origin:bottom center;">
+        <svg width="44" height="46" viewBox="0 0 44 46">
+          <rect x="2" y="30" width="40" height="12" rx="2" fill="white" stroke="#111" stroke-width="2"/>
+          <rect x="4" y="18" width="36" height="14" rx="2" fill="#f5f5f5" stroke="#111" stroke-width="2"/>
+          <rect x="6" y="8" width="32" height="12" rx="2" fill="white" stroke="#111" stroke-width="2"/>
+          <line x1="10" y1="12" x2="34" y2="12" stroke="#ddd" stroke-width="1"/>
+          <line x1="10" y1="15" x2="30" y2="15" stroke="#ddd" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- GLASSES -->
+      <div class="obj" id="obj-glasses" style="position:absolute;bottom:76px;left:80px;transform-origin:bottom center;">
+        <svg width="64" height="26" viewBox="0 0 64 26">
+          <circle cx="16" cy="13" r="12" fill="white" stroke="#111" stroke-width="2"/>
+          <circle cx="48" cy="13" r="12" fill="white" stroke="#111" stroke-width="2"/>
+          <line x1="28" y1="13" x2="36" y2="13" stroke="#111" stroke-width="2"/>
+          <line x1="0" y1="10" x2="4" y2="13" stroke="#111" stroke-width="2"/>
+          <line x1="60" y1="13" x2="64" y2="10" stroke="#111" stroke-width="2"/>
+        </svg>
+      </div>
+
+      <!-- ERASER -->
+      <div class="obj" id="obj-eraser" style="position:absolute;bottom:74px;left:150px;transform-origin:bottom center;">
+        <svg width="34" height="20" viewBox="0 0 34 20">
+          <rect x="2" y="2" width="30" height="16" rx="3" fill="#f5f5f5" stroke="#111" stroke-width="2"/>
+          <rect x="2" y="2" width="12" height="16" rx="3" fill="white" stroke="#111" stroke-width="2"/>
+          <line x1="8" y1="6" x2="8" y2="14" stroke="#eee" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- PAPERCLIPS -->
+      <div class="obj" id="obj-clips" style="position:absolute;bottom:74px;left:220px;transform-origin:bottom center;">
+        <svg width="30" height="24" viewBox="0 0 30 24">
+          <path d="M6 20 Q2 20 2 14 Q2 4 10 4 Q16 4 16 10 L16 18 Q16 22 12 22 Q8 22 8 18 L8 10 Q8 8 10 8 Q12 8 12 10 L12 18" fill="none" stroke="#111" stroke-width="2" stroke-linecap="round"/>
+          <path d="M20 20 Q16 20 16 14 Q16 4 24 4 Q30 4 30 10 L30 18" fill="none" stroke="#111" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      </div>
+
+      <!-- STICKY NOTE -->
+      <div class="obj" id="obj-note" style="position:absolute;bottom:72px;right:105px;transform-origin:bottom center;">
+        <svg width="38" height="38" viewBox="0 0 38 38">
+          <rect x="2" y="2" width="34" height="34" rx="2" fill="#fff9c4" stroke="#111" stroke-width="2"/>
+          <line x1="8" y1="12" x2="30" y2="12" stroke="#aaa" stroke-width="1.5"/>
+          <line x1="8" y1="18" x2="26" y2="18" stroke="#aaa" stroke-width="1.5"/>
+          <line x1="8" y1="24" x2="28" y2="24" stroke="#aaa" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <!-- TAPE -->
+      <div class="obj" id="obj-tape" style="position:absolute;bottom:72px;left:270px;transform-origin:bottom center;">
+        <svg width="36" height="36" viewBox="0 0 36 36">
+          <circle cx="18" cy="18" r="16" fill="white" stroke="#111" stroke-width="2"/>
+          <circle cx="18" cy="18" r="8" fill="#f5f5f5" stroke="#111" stroke-width="1.5"/>
+          <circle cx="18" cy="18" r="4" fill="white" stroke="#111" stroke-width="1"/>
+        </svg>
+      </div>
+
+      <!-- Table -->
+      <div class="table-surface"></div>
+      <div class="table-leg-left"></div>
+      <div class="table-leg-right"></div>
+
+      <!-- =============================================
+           CUSTOMIZE YOUR PROJECTS HERE
+           Replace the text inside <span> with your real project names.
+           You can also add an onclick="window.open('https://...')" to each .project div.
+           ============================================= -->
+      <div class="projects-container">
+        <div class="project" id="proj-1" data-knockcount="0">
+          <span>Case Study</span>
+          <div class="counter-badge">0/3</div>
+        </div>
+        <div class="project" id="proj-2" data-knockcount="0">
+          <span>Dev Work</span>
+          <div class="counter-badge">0/3</div>
+        </div>
+        <div class="project" id="proj-3" data-knockcount="0">
+          <span>Experiments</span>
+          <div class="counter-badge">0/3</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+// =============================================
+// KNOCK SEQUENCES
+// Each project knocks 3 different objects in order.
+// anim options: knocked-right-slow | knocked-left-slow | knocked-far | knocked-bounce | knocked-scatter
+// =============================================
+const knockSequences = {
+  'proj-1': [
+    { id: 'obj-mug',    anim: 'knocked-right-slow' },
+    { id: 'obj-plant',  anim: 'knocked-left-slow'  },
+    { id: 'obj-pencil', anim: 'knocked-far'         },
+  ],
+  'proj-2': [
+    { id: 'obj-books',   anim: 'knocked-right-slow' },
+    { id: 'obj-glasses', anim: 'knocked-bounce'      },
+    { id: 'obj-eraser',  anim: 'knocked-left-slow'  },
+  ],
+  'proj-3': [
+    { id: 'obj-clips', anim: 'knocked-right-slow' },
+    { id: 'obj-note',  anim: 'knocked-bounce'      },
+    { id: 'obj-tape',  anim: 'knocked-scatter'     },
+  ],
+};
+
+document.querySelectorAll('.project').forEach(proj => {
+  proj.addEventListener('mouseenter', () => {
+    const id = proj.id;
+    let count = parseInt(proj.dataset.knockcount, 10);
+    const badge = proj.querySelector('.counter-badge');
+    const seq = knockSequences[id];
+
+    if (count < seq.length) {
+      const { id: objId, anim } = seq[count];
+      const objEl = document.getElementById(objId);
+      objEl.classList.remove('knocked-right-slow','knocked-left-slow','knocked-far','knocked-bounce','knocked-scatter');
+      void objEl.offsetWidth;
+      objEl.classList.add(anim);
+      count++;
+      proj.dataset.knockcount = count;
+      badge.textContent = `${count}/3`;
+      if (count >= seq.length) {
+        proj.classList.add('exhausted');
+        badge.textContent = '✓';
+      }
+    }
+  });
+});
+</script>
+</body>
+</html>

@@ -1,120 +1,278 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#000000" />
-  <meta name="description" content="Beat-matched music visualizer with GIF overlays" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portfolio</title>
+<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/ranade">
+<style>
+  :root {
+    --font-family-headline: 'Ranade', 'Arial Black', sans-serif;
+    --font-h1: 6.25rem/.82 var(--font-family-headline);
+  }
 
-  <title>Tofutopia Visualizer</title>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
 
-  <link rel="manifest" href="/manifest.json" />
-  <link rel="stylesheet" href="/styles/main.css" />
+  body {
+    background: #ffffff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Ranade', 'Arial Black', sans-serif;
+    overflow-x: hidden;
+    padding: 48px 32px 56px;
+  }
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+  /* ── Top meta info ── */
+  .meta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    text-align: center;
+  }
+  .meta__location {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #111;
+  }
+  .meta__email {
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: #aaa;
+  }
+
+  /* ── Main title ── */
+  .title {
+    font: var(--font-h1);
+    font-size: max(3.8rem, 7cqi);
+    max-width: 12em;
+    text-align: center;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    color: #111;
+    line-height: 0.82;
+  }
+
+  /* ── Center cat ── */
+  .cat-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex: 0 0 auto;
+  }
+  #cat {
+    width: clamp(160px, 26vmin, 300px);
+    height: auto;
+    image-rendering: pixelated;
+    display: block;
+  }
+
+  /* ── Subtitle / descriptor ── */
+  .descriptor {
+    font-size: max(2.8rem, 5cqi);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    text-transform: uppercase;
+    text-align: center;
+    color: #d8d8d8;
+    line-height: 0.88;
+    max-width: 14em;
+  }
+
+  /* ── Buttons row ── */
+  .buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 24px 32px;
+    width: 100%;
+  }
+
+  /* ── Button CSS (uiverse.io) ── */
+  .type--A { --line_color: #555555; --back_color: #ffecf6; }
+  .type--B { --line_color: #1b1919; --back_color: #e9ecff; }
+  .type--C { --line_color: #00135c; --back_color: #defffa; }
+  .type--D { --line_color: #4a2000; --back_color: #fff3e0; }
+  .type--E { --line_color: #1a3300; --back_color: #f0ffe0; }
+
+  .button {
+    position: relative;
+    z-index: 0;
+    width: 200px;
+    height: 56px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: bold;
+    color: var(--line_color);
+    letter-spacing: 2px;
+    transition: all 0.3s ease;
+    font-family: 'Ranade', 'Arial Black', sans-serif;
+    text-transform: uppercase;
+  }
+  .button__text {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+  .button::before,
+  .button::after,
+  .button__text::before,
+  .button__text::after {
+    content: "";
+    position: absolute;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--line_color);
+    transition: all 0.5s ease;
+  }
+  .button::before { top:0; left:54px; width:calc(100% - 56px * 2 - 16px); }
+  .button::after  { top:0; right:54px; width:8px; }
+  .button__text::before { bottom:0; right:54px; width:calc(100% - 56px * 2 - 16px); }
+  .button__text::after  { bottom:0; left:54px; width:8px; }
+  .button__line {
+    position: absolute; top:0; width:56px; height:100%; overflow:hidden;
+  }
+  .button__line::before {
+    content:""; position:absolute; top:0; width:150%; height:100%;
+    box-sizing:border-box; border-radius:300px; border:solid 3px var(--line_color);
+  }
+  .button__line:nth-child(1),
+  .button__line:nth-child(1)::before { left:0; }
+  .button__line:nth-child(2),
+  .button__line:nth-child(2)::before { right:0; }
+
+  .button:hover { letter-spacing: 6px; }
+  .label--default,
+  .label--hover {
+    position: absolute;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  .label--hover {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+
+  .button:hover .label--default {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  .button:hover .label--hover {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .button:hover .label--hover {
+  letter-spacing: 2px;
+  }
+  .label--hover {
+  opacity: 0;
+  transform: translateY(6px);
+  text-align: center;
+  width: 100%;
+  }
+  .button:hover::before,
+  .button:hover .button__text::before { width:8px; }
+  .button:hover::after,
+  .button:hover .button__text::after  { width:calc(100% - 56px * 2 - 16px); }
+
+  .button__drow1, .button__drow2 {
+    position:absolute; z-index:-1; border-radius:16px; transform-origin:16px 16px;
+  }
+  .button__drow1 { top:-16px; left:40px; width:32px; height:0; transform:rotate(30deg); }
+  .button__drow2 { top:44px; left:77px; width:32px; height:0; transform:rotate(-127deg); }
+  .button__drow1::before, .button__drow1::after,
+  .button__drow2::before, .button__drow2::after { content:""; position:absolute; }
+  .button__drow1::before { bottom:0; left:0; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(-60deg); }
+  .button__drow1::after  { top:-10px; left:45px; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(69deg); }
+  .button__drow2::before { bottom:0; left:0; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(-146deg); }
+  .button__drow2::after  { bottom:26px; left:-40px; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(-262deg); }
+  .button__drow1, .button__drow1::before, .button__drow1::after,
+  .button__drow2, .button__drow2::before, .button__drow2::after { background:var(--back_color); }
+
+  .button:hover .button__drow1         { animation:drow1 ease-in 0.06s; animation-fill-mode:forwards; }
+  .button:hover .button__drow1::before { animation:drow2 linear 0.08s 0.06s; animation-fill-mode:forwards; }
+  .button:hover .button__drow1::after  { animation:drow3 linear 0.03s 0.14s; animation-fill-mode:forwards; }
+  .button:hover .button__drow2         { animation:drow4 linear 0.06s 0.2s;  animation-fill-mode:forwards; }
+  .button:hover .button__drow2::before { animation:drow3 linear 0.03s 0.26s; animation-fill-mode:forwards; }
+  .button:hover .button__drow2::after  { animation:drow5 linear 0.06s 0.32s; animation-fill-mode:forwards; }
+
+  @keyframes drow1 { 0%{height:0} 100%{height:100px} }
+  @keyframes drow2 { 0%{width:0;opacity:0} 10%{opacity:0} 11%{opacity:1} 100%{width:120px} }
+  @keyframes drow3 { 0%{width:0} 100%{width:80px} }
+  @keyframes drow4 { 0%{height:0} 100%{height:120px} }
+  @keyframes drow5 { 0%{width:0} 100%{width:124px} }
+</style>
 </head>
 <body>
 
-  <div id="app">
-
-    <header id="header">
-      <div id="logo">TOFUTOPIA</div>
-      <div id="bpm-display">
-        <span id="bpm-number">--</span>
-        <span id="bpm-label">BPM</span>
-      </div>
-    </header>
-
-    <main id="viz-wrap">
-      <canvas id="canvas"></canvas>
-      <div id="gif-layer">
-        <img id="gif-el" alt="" />
-      </div>
-      <div id="beat-flash"></div>
-
-      <div id="start-screen">
-        <div id="start-inner">
-          <div id="start-title">VISUALIZER</div>
-          <div id="start-sub">beat-matched • gif-powered • milkdrop presets</div>
-          <button id="btn-start-mic">
-            <span class="btn-icon">◉</span> start with microphone
-          </button>
-          <div id="start-hint">allow mic access when prompted</div>
-        </div>
-      </div>
-    </main>
-
-    <footer id="controls">
-
-      <div class="control-group">
-        <button id="btn-mic" class="ctrl-btn" title="Microphone">◉ mic</button>
-        <button id="btn-stop" class="ctrl-btn" disabled title="Stop">▪ stop</button>
-        <button id="btn-tap" class="ctrl-btn" title="Tap BPM">⬡ tap</button>
-      </div>
-
-      <div class="control-group">
-        <label class="ctrl-label">viz</label>
-        <select id="viz-select" class="ctrl-select">
-          <option value="bars">bars</option>
-          <option value="wave">wave</option>
-          <option value="radial">radial</option>
-          <option value="particles">particles</option>
-          <option value="milkdrop">milkdrop</option>
-        </select>
-
-        <label class="ctrl-label">color</label>
-        <select id="color-select" class="ctrl-select">
-          <option value="rainbow">rainbow</option>
-          <option value="fire">fire</option>
-          <option value="ice">ice</option>
-          <option value="matrix">matrix</option>
-          <option value="mono">mono</option>
-        </select>
-      </div>
-
-      <div class="control-group">
-        <label class="ctrl-label">sens</label>
-        <input type="range" id="sensitivity" min="1" max="20" value="8" step="1" class="ctrl-range" />
-        <span id="sens-val" class="ctrl-value">8</span>
-      </div>
-
-      <div class="control-group">
-        <label class="ctrl-label">gif</label>
-        <input type="text" id="gif-url" class="ctrl-input" placeholder="paste gif url…" />
-        <button id="btn-load-gif" class="ctrl-btn">load</button>
-        <button id="btn-upload-gif" class="ctrl-btn">upload</button>
-        <button id="btn-clear-gif" class="ctrl-btn">clear</button>
-        <input type="file" id="gif-file" accept="image/gif,image/*" style="display:none" />
-      </div>
-
-      <div class="control-group">
-        <label class="ctrl-label">effect</label>
-        <select id="gif-fx" class="ctrl-select">
-          <option value="pulse">pulse</option>
-          <option value="shake">shake</option>
-          <option value="spin">spin</option>
-          <option value="bounce">bounce</option>
-        </select>
-
-        <label class="ctrl-label">pos</label>
-        <select id="gif-pos" class="ctrl-select">
-          <option value="center">center</option>
-          <option value="tl">top left</option>
-          <option value="tr">top right</option>
-          <option value="bl">bot left</option>
-          <option value="br">bot right</option>
-        </select>
-
-        <label class="ctrl-label">size</label>
-        <input type="range" id="gif-size" min="40" max="300" value="120" step="10" class="ctrl-range" />
-      </div>
-
-    </footer>
-
+  <!-- Top: location + email -->
+  <div class="meta">
+    <span class="meta__location">Tofutopia</span>
+    <span class="meta__email">Seattle, Washington</span>
   </div>
 
-  <script type="module" src="/src/main.js"></script>
+  <!-- Main name title -->
+  <h1 class="title">Arthur Yang</h1>
+  <!-- Pixel cat -->
+  
+  <div class="cat-wrap"></div>
+    <img id="cat" src="tofu.jpg" alt="pixel cat">
+  </div>
+
+  <!-- Ghost descriptor text behind/below cat -->
+  <p class="descriptor">Nerds Clusters Enjoyer</p>
+
+  <!-- Nav buttons -->
+  <nav class="buttons">
+    <a class="button type--A" href="/visualizer">
+      <div class="button__line"></div>
+      <div class="button__line"></div>
+      <span class="button__text">Visualizer</span>
+      <div class="button__drow1"></div>
+      <div class="button__drow2"></div>
+    </a>
+    <a class="button type--B" href="/baby-registry">
+      <div class="button__line"></div>
+      <div class="button__line"></div>
+      <span class="button__text">Baby Registry</span>
+      <div class="button__drow1"></div>
+      <div class="button__drow2"></div>
+    </a>
+    <a class="button type--C" href="/teaas">
+      <div class="button__line"></div>
+      <div class="button__line"></div>
+      <span class="button__text">
+      <span class="label--default">TEaaS</span>
+      <span class="label--hover">Tax Evasion as a Service</span>
+      </span>
+      <div class="button__drow1"></div>
+      <div class="button__drow2"></div>
+    </a>
+    <a class="button type--D" href="/taco emporium">
+      <div class="button__line"></div>
+      <div class="button__line"></div>
+      <span class="button__text">Taco Emporium</span>
+      <div class="button__drow1"></div>
+      <div class="button__drow2"></div>
+    </a>
+    <a class="button type--E" href="/uncool ghoul">
+      <div class="button__line"></div>
+      <div class="button__line"></div>
+      <span class="button__text">Uncool Ghoul</span>
+      <div class="button__drow1"></div>
+      <div class="button__drow2"></div>
+    </a>
+  </nav>
 
 </body>
 </html>

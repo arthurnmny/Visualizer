@@ -260,6 +260,10 @@ html, body {
   width: 180px;
 }
 
+.ctrl-input-small {
+  width: 84px;
+}
+
 .ctrl-input:focus {
   border-color: var(--accent);
 }
@@ -298,6 +302,12 @@ html, body {
   font-size: 11px;
   color: var(--gray-light);
   min-width: 16px;
+}
+
+.ctrl-status {
+  font-size: 11px;
+  color: var(--gray-light);
+  font-family: var(--font-sans);
 }
 
 .btn-icon {

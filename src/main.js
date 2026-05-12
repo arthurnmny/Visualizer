@@ -1,6 +1,7 @@
 import { AudioEngine } from './audio.js';
 import { BPMController } from './bpm.js';
 import { GifController } from './gifs.js';
+import { SyncedGifMode } from './syncedGifMode.js';
 import { Visualizer } from './visualizer.js';
 
 const audio = new AudioEngine();
@@ -19,6 +20,9 @@ const elements = {
   colorSelect: document.querySelector('#color-select'),
   sensitivity: document.querySelector('#sensitivity'),
   sensitivityValue: document.querySelector('#sens-val'),
+  bpmSource: document.querySelector('#bpm-source'),
+  manualBpm: document.querySelector('#manual-bpm'),
+  gifCycleStatus: document.querySelector('#gif-cycle-status'),
   gifUrl: document.querySelector('#gif-url'),
   loadGif: document.querySelector('#btn-load-gif'),
   uploadGif: document.querySelector('#btn-upload-gif'),
@@ -32,6 +36,13 @@ const elements = {
 
 const visualizer = new Visualizer(elements.canvas);
 const gifs = new GifController(elements.gifEl);
+const syncedGifMode = new SyncedGifMode({
+  onStatus(message) {
+    elements.gifCycleStatus.textContent = message;
+  },
+});
+
+visualizer.setSyncedGifMode(syncedGifMode);
 
 let flashTimeout = null;
 
@@ -42,7 +53,6 @@ function setRunningState(isRunning) {
     elements.startScreen.classList.add('hidden');
   } else {
     elements.startScreen.classList.remove('hidden');
-    elements.bpmNumber.textContent = '--';
   }
 }
 
@@ -74,6 +84,11 @@ function updateBpmLabel(value) {
   elements.bpmNumber.textContent = value ? String(value) : '--';
 }
 
+function syncManualInputState() {
+  const isManual = elements.bpmSource.value === 'manual';
+  elements.manualBpm.disabled = !isManual;
+}
+
 function bindUi() {
   elements.startMic.addEventListener('click', startMicrophone);
   elements.micButton.addEventListener('click', startMicrophone);
@@ -81,12 +96,18 @@ function bindUi() {
 
   elements.tapButton.addEventListener('click', () => {
     const tapped = bpm.tap();
-    updateBpmLabel(tapped);
+    elements.manualBpm.value = String(tapped);
+    if (elements.bpmSource.value === 'manual') {
+      updateBpmLabel(tapped);
+    }
     showBeatFlash();
   });
 
-  elements.vizSelect.addEventListener('change', (event) => {
+  elements.vizSelect.addEventListener('change', async (event) => {
     visualizer.setMode(event.target.value);
+    if (event.target.value === 'gif-cycle') {
+      await syncedGifMode.init();
+    }
   });
 
   elements.colorSelect.addEventListener('change', (event) => {
@@ -96,6 +117,20 @@ function bindUi() {
   elements.sensitivity.addEventListener('input', (event) => {
     bpm.setSensitivity(event.target.value);
     elements.sensitivityValue.textContent = event.target.value;
+  });
+
+  elements.bpmSource.addEventListener('change', (event) => {
+    bpm.setSourceMode(event.target.value);
+    syncManualInputState();
+    updateBpmLabel(bpm.getEffectiveBpm());
+  });
+
+  elements.manualBpm.addEventListener('input', (event) => {
+    const manual = bpm.setManualBpm(event.target.value);
+    elements.manualBpm.value = String(manual);
+    if (elements.bpmSource.value === 'manual') {
+      updateBpmLabel(manual);
+    }
   });
 
   elements.loadGif.addEventListener('click', () => {
@@ -138,32 +173,39 @@ function bindUi() {
   });
 
   bpm.setSensitivity(elements.sensitivity.value);
+  bpm.setSourceMode(elements.bpmSource.value);
+  bpm.setManualBpm(elements.manualBpm.value);
   visualizer.setMode(elements.vizSelect.value);
   visualizer.setColorScheme(elements.colorSelect.value);
   gifs.setEffect(elements.gifFx.value);
   gifs.setPosition(elements.gifPos.value);
   gifs.setSize(elements.gifSize.value);
+  syncManualInputState();
+  updateBpmLabel(bpm.getEffectiveBpm());
 }
 
 function frame(now) {
   const sample = audio.sample();
-  let beatState = { beat: false, bpm: bpm.bpm, pulse: 0 };
+  let beatState = bpm.snapshot(false);
 
   if (sample) {
     beatState = bpm.processFrame(sample.frequencyData, now);
     if (beatState.beat) {
       gifs.triggerBeat();
+      syncedGifMode.onBeat(beatState.effectiveBpm);
       showBeatFlash();
     }
-    updateBpmLabel(beatState.bpm);
   }
+
+  updateBpmLabel(beatState.effectiveBpm);
 
   visualizer.render({
     frequencyData: sample?.frequencyData,
     timeData: sample?.timeData,
     pulse: beatState.pulse,
-    active: Boolean(sample),
+    active: Boolean(sample) || visualizer.mode === 'gif-cycle',
     now,
+    effectiveBpm: beatState.effectiveBpm,
   });
 
   window.requestAnimationFrame(frame);
@@ -183,5 +225,6 @@ async function registerServiceWorker() {
 
 bindUi();
 visualizer.resize();
+void syncedGifMode.init();
 registerServiceWorker();
 window.requestAnimationFrame(frame);

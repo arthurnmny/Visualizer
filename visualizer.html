@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
+  <meta name="description" content="Beat-matched music visualizer with GIF overlays" />
+
+  <title>Visualizer</title>
+
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="stylesheet" href="/styles/main.css" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <div id="app">
+
+    <header id="header">
+      <div id="logo">TOFUTOPIA</div>
+      <div id="bpm-display">
+        <span id="bpm-number">--</span>
+        <span id="bpm-label">BPM</span>
+      </div>
+    </header>
+
+    <main id="viz-wrap">
+      <canvas id="canvas"></canvas>
+      <div id="gif-layer">
+        <img id="gif-el" alt="" />
+      </div>
+      <div id="beat-flash"></div>
+
+      <div id="start-screen">
+        <div id="start-inner">
+          <div id="start-title">VISUALIZER</div>
+          <div id="start-sub">beat-matched • gif-powered • synced loops</div>
+          <button id="btn-start-mic">
+            <span class="btn-icon">◉</span> start with microphone
+          </button>
+          <div id="start-hint">allow mic access when prompted</div>
+        </div>
+      </div>
+    </main>
+
+    <footer id="controls">
+
+      <div class="control-group">
+        <button id="btn-mic" class="ctrl-btn" title="Microphone">◉ mic</button>
+        <button id="btn-stop" class="ctrl-btn" disabled title="Stop">■ stop</button>
+        <button id="btn-tap" class="ctrl-btn" title="Tap BPM">⬡ tap</button>
+      </div>
+
+      <div class="control-group">
+        <label class="ctrl-label">viz</label>
+        <select id="viz-select" class="ctrl-select">
+          <option value="bars">bars</option>
+          <option value="wave">wave</option>
+          <option value="radial">radial</option>
+          <option value="particles">particles</option>
+          <option value="milkdrop">milkdrop</option>
+          <option value="gif-cycle">gif cycle</option>
+        </select>
+
+        <label class="ctrl-label">color</label>
+        <select id="color-select" class="ctrl-select">
+          <option value="rainbow">rainbow</option>
+          <option value="fire">fire</option>
+          <option value="ice">ice</option>
+          <option value="matrix">matrix</option>
+          <option value="mono">mono</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label class="ctrl-label">sens</label>
+        <input type="range" id="sensitivity" min="1" max="20" value="8" step="1" class="ctrl-range" />
+        <span id="sens-val" class="ctrl-value">8</span>
+      </div>
+
+      <div class="control-group">
+        <label class="ctrl-label">bpm</label>
+        <select id="bpm-source" class="ctrl-select">
+          <option value="auto">auto</option>
+          <option value="manual">manual</option>
+        </select>
+        <input type="number" id="manual-bpm" class="ctrl-input ctrl-input-small" min="40" max="240" step="1" value="128" disabled />
+      </div>
+
+      <div class="control-group">
+        <label class="ctrl-label">gif</label>
+        <input type="text" id="gif-url" class="ctrl-input" placeholder="paste gif url..." />
+        <button id="btn-load-gif" class="ctrl-btn">load</button>
+        <button id="btn-upload-gif" class="ctrl-btn">upload</button>
+        <button id="btn-clear-gif" class="ctrl-btn">clear</button>
+        <input type="file" id="gif-file" accept="image/gif,image/*" style="display:none" />
+      </div>
+
+      <div class="control-group">
+        <label class="ctrl-label">effect</label>
+        <select id="gif-fx" class="ctrl-select">
+          <option value="pulse">pulse</option>
+          <option value="shake">shake</option>
+          <option value="spin">spin</option>
+          <option value="bounce">bounce</option>
+        </select>
+
+        <label class="ctrl-label">pos</label>
+        <select id="gif-pos" class="ctrl-select">
+          <option value="center">center</option>
+          <option value="tl">top left</option>
+          <option value="tr">top right</option>
+          <option value="bl">bot left</option>
+          <option value="br">bot right</option>
+        </select>
+
+        <label class="ctrl-label">size</label>
+        <input type="range" id="gif-size" min="40" max="300" value="120" step="10" class="ctrl-range" />
+      </div>
+
+      <div class="control-group">
+        <span id="gif-cycle-status" class="ctrl-status">gif-cycle: loading library...</span>
+      </div>
+
+    </footer>
+
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+
+</body>
+</html>

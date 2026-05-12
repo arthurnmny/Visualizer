@@ -12,6 +12,7 @@ export class Visualizer {
     this.ctx = canvas.getContext('2d');
     this.mode = 'bars';
     this.colorScheme = 'rainbow';
+    this.syncedGifMode = null;
     this.particles = Array.from({ length: 80 }, () => this.createParticle());
     this.resize();
   }
@@ -24,6 +25,10 @@ export class Visualizer {
     this.colorScheme = scheme;
   }
 
+  setSyncedGifMode(mode) {
+    this.syncedGifMode = mode;
+  }
+
   resize() {
     const ratio = window.devicePixelRatio || 1;
     const { clientWidth, clientHeight } = this.canvas;
@@ -32,7 +37,7 @@ export class Visualizer {
     this.ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
   }
 
-  render({ frequencyData, timeData, pulse = 0, active = false, now = performance.now() }) {
+  render({ frequencyData, timeData, pulse = 0, active = false, now = performance.now(), effectiveBpm = null }) {
     const width = this.canvas.clientWidth;
     const height = this.canvas.clientHeight;
     const colors = PALETTE_MAP[this.colorScheme] || PALETTE_MAP.rainbow;
@@ -51,6 +56,15 @@ export class Visualizer {
     background.addColorStop(1, '#000000');
     this.ctx.fillStyle = background;
     this.ctx.fillRect(0, 0, width, height);
+
+    if (this.mode === 'gif-cycle') {
+      if (this.syncedGifMode) {
+        this.syncedGifMode.render(this.ctx, width, height, { now, pulse, effectiveBpm });
+      } else {
+        this.drawMessage('GIF mode unavailable', width, height);
+      }
+      return;
+    }
 
     if (!active || !frequencyData || !timeData) {
       this.drawIdle(now, colors);
@@ -178,6 +192,19 @@ export class Visualizer {
     }
     this.ctx.closePath();
     this.ctx.stroke();
+    this.ctx.restore();
+  }
+
+  drawMessage(message, width = this.canvas.clientWidth, height = this.canvas.clientHeight) {
+    this.ctx.save();
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.5)';
+    this.ctx.fillRect(width * 0.2, height * 0.4, width * 0.6, 84);
+    this.ctx.strokeStyle = '#39ff14';
+    this.ctx.strokeRect(width * 0.2, height * 0.4, width * 0.6, 84);
+    this.ctx.fillStyle = '#39ff14';
+    this.ctx.font = '14px "Space Mono", monospace';
+    this.ctx.textAlign = 'center';
+    this.ctx.fillText(message, width / 2, height * 0.4 + 48);
     this.ctx.restore();
   }
 

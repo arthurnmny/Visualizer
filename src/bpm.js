@@ -17,12 +17,36 @@ export class BPMController {
     this.lastBeatAt = 0;
     this.beatTimes = [];
     this.tapTimes = [];
-    this.bpm = null;
+    this.detectedBpm = null;
+    this.manualBpm = 128;
+    this.sourceMode = 'auto';
     this.beatPulse = 0;
   }
 
   setSensitivity(value) {
     this.sensitivity = Number(value);
+  }
+
+  setSourceMode(mode) {
+    this.sourceMode = mode === 'manual' ? 'manual' : 'auto';
+  }
+
+  setManualBpm(value) {
+    const parsed = Number(value);
+    if (!Number.isFinite(parsed)) {
+      return this.manualBpm;
+    }
+
+    this.manualBpm = Math.min(240, Math.max(40, Math.round(parsed)));
+    return this.manualBpm;
+  }
+
+  getEffectiveBpm() {
+    if (this.sourceMode === 'manual') {
+      return this.manualBpm;
+    }
+
+    return this.detectedBpm;
   }
 
   tap(now = performance.now()) {
@@ -32,7 +56,7 @@ export class BPMController {
     }
 
     if (this.tapTimes.length < 2) {
-      return this.bpm;
+      return this.manualBpm;
     }
 
     const intervals = [];
@@ -41,14 +65,14 @@ export class BPMController {
     }
 
     const interval = median(intervals);
-    this.bpm = Math.round(60000 / interval);
-    return this.bpm;
+    this.manualBpm = Math.min(240, Math.max(40, Math.round(60000 / interval)));
+    return this.manualBpm;
   }
 
   processFrame(frequencyData, now = performance.now()) {
     if (!frequencyData || frequencyData.length === 0) {
       this.beatPulse *= 0.92;
-      return { beat: false, bpm: this.bpm, pulse: this.beatPulse };
+      return this.snapshot(false);
     }
 
     const bassBins = Math.max(8, Math.floor(frequencyData.length * 0.05));
@@ -87,15 +111,26 @@ export class BPMController {
         }
 
         const interval = median(intervals);
-        const detectedBpm = Math.round(60000 / interval);
-        if (detectedBpm >= 50 && detectedBpm <= 220) {
-          this.bpm = detectedBpm;
+        const nextDetected = Math.round(60000 / interval);
+        if (nextDetected >= 50 && nextDetected <= 220) {
+          this.detectedBpm = nextDetected;
         }
       }
     } else {
       this.beatPulse *= 0.92;
     }
 
-    return { beat, bpm: this.bpm, pulse: this.beatPulse };
+    return this.snapshot(beat);
+  }
+
+  snapshot(beat) {
+    return {
+      beat,
+      pulse: this.beatPulse,
+      detectedBpm: this.detectedBpm,
+      manualBpm: this.manualBpm,
+      effectiveBpm: this.getEffectiveBpm(),
+      sourceMode: this.sourceMode,
+    };
   }
 }

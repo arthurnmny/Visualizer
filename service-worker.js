@@ -1,4 +1,4 @@
-const CACHE_NAME = 'tofutopia-visualizer-v1';
+const CACHE_NAME = 'tofutopia-visualizer-v2';
 const APP_SHELL = [
   '/',
   '/index.html',
@@ -6,9 +6,12 @@ const APP_SHELL = [
   '/styles/main.css',
   '/src/main.js',
   '/src/audio.js',
+  '/src/assets.js',
   '/src/bpm.js',
   '/src/gifs.js',
+  '/src/syncedGifMode.js',
   '/src/visualizer.js',
+  '/assets/gifs/library.json',
 ];
 
 self.addEventListener('install', (event) => {
@@ -33,6 +36,22 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') {
+    return;
+  }
+
+  const requestUrl = new URL(event.request.url);
+  if (requestUrl.pathname === '/assets/gifs/library.json') {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response.ok) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy));
+          }
+          return response;
+        })
+        .catch(() => caches.match(event.request))
+    );
     return;
   }
 
