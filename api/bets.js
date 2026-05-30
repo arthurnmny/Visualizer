@@ -1,17 +1,4 @@
-const SUPABASE_URL = process.env.SUPABASE_URL;
-const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
-  throw new Error('Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables');
-}
-
-let supabase;
-async function getSupabase() {
-  if (supabase) return supabase;
-  const { createClient } = await import('@supabase/supabase-js');
-  supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-  return supabase;
-}
+const { getSupabaseServiceClient } = require('../src/supabaseClient');
 
 module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') {
@@ -46,7 +33,7 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Total chips exceed 100' });
     }
 
-    const supabase = await getSupabase();
+    const supabase = await getSupabaseServiceClient();
     const { data, error } = await supabase.from('bets').insert([{
       name,
       q1chips,
@@ -70,7 +57,7 @@ module.exports = async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    const supabase = await getSupabase();
+    const supabase = await getSupabaseServiceClient();
     const { data, error } = await supabase
       .from('bets')
       .select('*')

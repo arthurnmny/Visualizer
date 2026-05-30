@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -15,7 +16,9 @@
       --accent: #8f6f52;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
@@ -31,7 +34,8 @@
       padding: 32px 0 56px;
     }
 
-    header, section {
+    header,
+    section {
       padding: 28px 0;
       border-bottom: 1px solid var(--line);
     }
@@ -44,7 +48,8 @@
       text-transform: uppercase;
     }
 
-    h1, h2 {
+    h1,
+    h2 {
       margin: 0;
       line-height: 1.1;
     }
@@ -54,7 +59,9 @@
       font-size: clamp(2.4rem, 8vw, 5.8rem);
     }
 
-    h2 { font-size: clamp(1.5rem, 4vw, 2.4rem); }
+    h2 {
+      font-size: clamp(1.5rem, 4vw, 2.4rem);
+    }
 
     p {
       max-width: 760px;
@@ -101,13 +108,16 @@
       object-fit: cover;
     }
 
-    .registry-card, .form-wrap {
+    .registry-card,
+    .form-wrap {
       border: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.45);
       padding: 18px;
     }
 
-    .registry-card h3 { margin: 0 0 6px; }
+    .registry-card h3 {
+      margin: 0 0 6px;
+    }
 
     .registry-card p {
       margin: 0 0 14px;
@@ -140,7 +150,9 @@
       font-weight: 700;
     }
 
-    input, select, textarea {
+    input,
+    select,
+    textarea {
       width: 100%;
       border: 1px solid var(--line);
       background: white;
@@ -169,7 +181,12 @@
     }
 
     @media (max-width: 760px) {
-      .grid, .media-grid { grid-template-columns: 1fr; }
+
+      .grid,
+      .media-grid {
+        grid-template-columns: 1fr;
+      }
+
       .photo-slot.featured {
         min-height: 320px;
         grid-row: auto;
@@ -177,13 +194,15 @@
     }
   </style>
 </head>
+
 <body>
   <main class="page">
     <header>
       <p class="eyebrow">A little announcement</p>
       <h1>Our family is growing.</h1>
       <p>
-        We are happy to share that a new baby is on the way! This page is to help share our joy and excitement with people we love.
+        We are happy to share that a new baby is on the way! This page is to help share our joy and excitement with
+        people we love.
       </p>
     </header>
 
@@ -191,15 +210,15 @@
       <p class="eyebrow">I read a lot of poetry this year, so now you have to as well</p>
       <h2 id="message-heading">A Flower Given to My Daughter by James Joyce</h2>
       <p>
-Frail the white rose and frail are <br>
-Her hands that gave<br>
-Whose soul is sere and paler<br>
-Than time’s wan wave.<br>
-<br>
-Rosefrail and fair – yet frailest<br>
-A wonder wild<br>
-In gentle eyes thou veilest,<br>
-My blueveined child.<br>
+        Frail the white rose and frail are <br>
+        Her hands that gave<br>
+        Whose soul is sere and paler<br>
+        Than time’s wan wave.<br>
+        <br>
+        Rosefrail and fair – yet frailest<br>
+        A wonder wild<br>
+        In gentle eyes thou veilest,<br>
+        My blueveined child.<br>
       </p>
     </section>
 
@@ -229,11 +248,13 @@ My blueveined child.<br>
           <h3>Gift Registry</h3>
           <p>This is a Amazon list, but you<br>
             don't need to buy it from here</p>
-          <a class="button" href="https://www.amazon.com/baby-reg/arthur-yang-hallie-cho-june-2026-bainbridgeisland/4YX23TYNKQAI ">Open Registry</a>
+          <a class="button"
+            href="https://www.amazon.com/baby-reg/arthur-yang-hallie-cho-june-2026-bainbridgeisland/4YX23TYNKQAI ">Open
+            Registry</a>
         </article>
 
         <article class="registry-card">
-          <h3>Or other!</h3>
+          <h3>Or other! (We like books!)</h3>
           <p>Gifts can be sent to: <br>
             Arthur & Hallie<br>
             11127 Genvieve pl. NE<br>
@@ -242,12 +263,14 @@ My blueveined child.<br>
           <!-- <a class="button" href="#">Open registry</a> -->
         </article>
 
-                <article class="registry-card">
+        <article class="registry-card">
           <h3>Check if the baby is born:
-            <br><a href="babystatus.html">here!</a></h3>
-          
+            <br><a href="babystatus.html">here!</a>
+          </h3>
+
           <!-- <a class="button" href="#">Open registry</a> -->
         </article>
+
       </div>
     </section>
 
@@ -346,4 +369,5 @@ My blueveined child.<br>
     });
   </script>
 </body>
+
 </html>

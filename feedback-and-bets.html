@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Bets & Feedback</title>
+  <style>
+    :root {
+      --ink: #202124;
+      --muted: #686f75;
+      --line: #d9d4cc;
+      --paper: #fffaf2;
+      --soft: #f4eadb;
+      --accent: #8f6f52;
+      --danger: #b33;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: var(--paper); color: var(--ink);
+      font-family: Arial, Helvetica, sans-serif; line-height: 1.5;
+    }
+    .page { width: min(1100px, calc(100% - 32px)); margin: 0 auto; padding: 32px 0 56px; }
+    header { padding: 28px 0; border-bottom: 1px solid var(--line); }
+    h1 { margin: 0; font-size: clamp(1.8rem,6vw,2.8rem); }
+    .toolbar { margin-top: 16px; display:flex; gap:12px; align-items:center; }
+    .button { display:inline-flex; align-items:center; justify-content:center; padding:8px 12px; background:var(--accent); color:white; text-decoration:none; border-radius:4px; border:1px solid rgba(0,0,0,0.05); cursor:pointer; }
+    section { margin-top: 28px; border:1px solid var(--line); background:rgba(255,255,255,0.6); padding:18px; }
+    table { width:100%; border-collapse:collapse; font-size:0.95rem; }
+    th, td { text-align:left; padding:8px 10px; border-bottom:1px solid #eee; }
+    th { background: #faf6f2; color:var(--muted); font-weight:700; }
+    .muted { color: var(--muted); }
+    .err { color: var(--danger); font-weight:700; }
+    @media (max-width:760px){ th, td{ font-size:0.85rem; } .toolbar{flex-direction:column;align-items:flex-start} }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header>
+      <h1>Bets & Baby Feedback</h1>
+      <div class="toolbar">
+        <button id="refresh" class="button">Refresh</button>
+        <a class="button" href="baby.html">Back to announcement</a>
+        <span id="status" class="muted" aria-live="polite"></span>
+      </div>
+    </header>
+
+    <section aria-labelledby="bets-heading">
+      <h2 id="bets-heading">Bets</h2>
+      <div id="bets-container" class="list muted">Loading bets…</div>
+    </section>
+
+    <section aria-labelledby="feedback-heading">
+      <h2 id="feedback-heading">Baby Feedback</h2>
+      <div id="feedback-container" class="list muted">Loading feedback…</div>
+    </section>
+  </main>
+
+  <script>
+    const statusEl = document.getElementById('status');
+    const betsEl = document.getElementById('bets-container');
+    const fbEl = document.getElementById('feedback-container');
+    document.getElementById('refresh').addEventListener('click', loadAll);
+
+    function renderTable(container, items) {
+      if (!items || items.length === 0) {
+        container.innerHTML = '<p class="muted">No records found.</p>';
+        return;
+      }
+      const cols = Object.keys(items[0]);
+      const thead = '<thead><tr>' + cols.map(c => '<th>'+escapeHtml(c)+'</th>').join('') + '</tr></thead>';
+      const rows = items.map(it => {
+        return '<tr>' + cols.map(c => '<td>'+escapeHtml(String(it[c] ?? ''))+'</td>').join('') + '</tr>';
+      }).join('');
+      container.innerHTML = '<div style="overflow:auto"><table>'+ thead + '<tbody>'+rows+'</tbody></table></div>';
+    }
+
+    function escapeHtml(s){ return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    async function fetchJson(url){
+      const res = await fetch(url + (url.indexOf('?')===-1 ? '?ts=' + Date.now() : '&ts=' + Date.now()));
+      if (!res.ok) throw new Error('HTTP ' + res.status + ' ' + res.statusText);
+      return res.json();
+    }
+
+    async function loadAll(){
+      statusEl.textContent = 'Loading…';
+      try {
+        const [bets, feedback] = await Promise.all([fetchJson('/api/bets'), fetchJson('/api/baby-feedback')]);
+        renderTable(betsEl, bets);
+        renderTable(fbEl, feedback);
+        statusEl.textContent = 'Loaded ' + (Array.isArray(bets) ? bets.length : 0) + ' bets and ' + (Array.isArray(feedback) ? feedback.length : 0) + ' feedback';
+        statusEl.className = 'muted';
+      } catch (err) {
+        console.error(err);
+        statusEl.textContent = 'Error loading data: ' + err.message;
+        statusEl.className = 'err';
+        betsEl.innerHTML = '<p class="err">Failed to load bets</p>';
+        fbEl.innerHTML = '<p class="err">Failed to load feedback</p>';
+      }
+    }
+
+    // initial load
+    loadAll();
+  </script>
+</body>
+</html>
