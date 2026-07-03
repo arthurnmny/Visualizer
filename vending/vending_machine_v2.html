@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NEO-KYOTO BEVERAGES</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #05080a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 0 40px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* ── TITLE ───────────────────────────────────── */
+  .title {
+    font-family: 'VT323', monospace;
+    font-size: 32px;
+    color: #5dcaa5;
+    letter-spacing: 6px;
+    text-shadow: 0 0 12px #5dcaa5, 0 0 24px #5dcaa544;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    /* CHANGE THIS TEXT WHENEVER YOU WANT */
+  }
+
+  /* ── MACHINE CONTAINER ───────────────────────── */
+  .machine {
+    position: relative;
+    /* Scale the whole machine to fit nicely on screen.
+       The background is 896px wide — we scale to 95vw max, capped at 600px.
+       Everything inside uses percentage positions so it scales with it. */
+    width: min(95vw, 600px);
+    aspect-ratio: 896 / 1200;
+  }
+
+  .machine-bg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* ── ALL OVERLAYS use % positions relative to machine ── */
+
+  /* SCREEN IMAGE — sits on the blank panel area */
+  .screen-img {
+    position: absolute;
+    /* Tuned to blankvending panel: top of panel ~7.5%, left edge ~10%
+       Takes up ~58% width, ~43% height of the machine */
+    top: 4.5%;
+    left: 10%;
+    width: 58%;
+    height: 43%;
+    object-fit: fill;
+    pointer-events: none;
+  }
+
+  /* TEXT DIV — sits inside the screen image's dark glass area */
+  .screen-text-wrap {
+    position: absolute;
+    top: 6%;
+    left: 14%;
+    width: 49%;
+    height: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 4% 5%;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .screen-header {
+    font-family: 'VT323', monospace;
+    font-size: clamp(14px, 2.8vw, 22px);
+    color: #5dcaa5;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px #5dcaa5;
+    margin-bottom: 6px;
+    white-space: nowrap;
+  }
+
+  .screen-body {
+    font-family: 'VT323', monospace;
+    font-size: clamp(12px, 2.2vw, 18px);
+    color: #5dcaa5cc;
+    line-height: 1.55;
+    text-shadow: 0 0 5px #5dcaa566;
+    transition: opacity 0.15s ease;
+    white-space: pre-line;
+  }
+
+  .screen-body.fade { opacity: 0; }
+
+  /* Scanlines over screen area */
+  .screen-scanlines {
+    position: absolute;
+    top: 6%;
+    left: 14%;
+    width: 49%;
+    height: 35%;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 3px,
+      rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px
+    );
+    pointer-events: none;
+    border-radius: 6%;
+  }
+
+  /* Cursor blink */
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: #5dcaa5;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  /* Screen flicker */
+  @keyframes flicker {
+    0%,89%,91%,93%,100% { opacity: 1; }
+    90% { opacity: 0.82; }
+    92% { opacity: 0.91; }
+  }
+  .screen-img { animation: flicker 7s infinite; }
+
+  /* ── BUTTONS — stacked vertically on right side ── */
+  .button-stack {
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    width:  18%;   /* ~240px at 896px wide */
+    display: flex;
+    flex-direction: column;
+    gap: 40px
+  }
+
+  .vbtn {
+    width: 100%;
+    aspect-ratio: 338 / 170;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: filter 0.08s;
+  /* }
+
+/* Allow overlay to position relative to each button */
+/* .vbtn {  */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Sliding door animation overlay */
+.transition-overlay {
+  position: absolute;
+  inset: 0;
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  pointer-events: none;
+  z-index: 100;
+}
+
+  .vbtn:focus-visible {
+    outline: 2px solid #5dcaa5;
+    outline-offset: 2px;
+  }
+
+  .vbtn.pressing { cursor: default; }
+
+  @keyframes glow-pulse {
+    0%,100% { filter: brightness(1); }
+    50%      { filter: brightness(1.35) drop-shadow(0 0 6px #a078ff); }
+  }
+  .vbtn.activated { animation: glow-pulse 0.5s ease-in-out; }
+
+  /* ── STICKER STRIP ───────────────────────────── */
+  .sticker-strip {
+    position: absolute;
+    /* Sits above the dispensing tray — approx 72%–82% down the machine */
+    top: 53%;
+    left: 5%;
+    width: 85%;
+    height: 9%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2%;
+    padding: 0 2%;
+  }
+
+  .sticker {
+    height: 100%;
+    width: auto;
+    max-width: 23%;
+    object-fit: contain;
+    /* Slight random rotation applied via JS for organic feel */
+    filter:
+    brightness(1.05)
+    contrast(0.9)
+    saturate(0.75)
+    drop-shadow(0 1px 3px rgba(0,0,0,0.7));
+  }
+  
+
+
+</style>
+</head>
+<body>
+
+<!-- TITLE — change this text whenever you want -->
+<div class="title">NEO-KAMAKURA BEVERAGES</div>
+
+<div class="machine">
+
+  <!-- BACKGROUND -->
+  <img class="machine-bg" src="vendingV2.png" alt="Vending Machine">
+
+  <!-- SCREEN IMAGE -->
+  <img class="screen-img" src="screen.png" alt="Screen">
+
+  <!-- SCANLINES (purely visual, on top of screen) -->
+  <div class="screen-scanlines"></div>
+
+  <!-- SCREEN TEXT (on top of screen image) -->
+  <div class="screen-text-wrap">
+    <div class="screen-header">▶ SELECT ITEM</div>
+    <div class="screen-body" id="screen-body">
+READY.<span class="cursor"></span>
+    </div>
+  </div>
+
+  <!-- BUTTONS — 4 stacked vertically on right -->
+  <!--
+    data-label  : matches your image folder name
+    data-msg    : text shown on screen when pressed
+    Change YES/NO/BACK/NEXT to whatever 4 buttons you want to use.
+    The image paths follow the pattern: LABEL/LABEL_1_static.png
+  -->
+  <div class="button-stack">
+
+    <button
+      class="vbtn"
+      id="btn-1"
+      data-label="CYBER-COLA"
+      data-msg="CYBER-COLA CONFIRMED.&#10;PROCESSING..."
+      style="background-image:url('buttons/CYBER-COLA/CYBER-COLA_1_static.png')"
+      onmouseenter="onHover(this)"
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)">
+    </button>
+
+    <button class="vbtn" id="btn-2"
+      data-label="PILLS"
+      data-msg="PILLS CONFIRMED.&#10;PROCESSING..."
+      style="background-image:url('buttons/PILLS/PILLS_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+    <button class="vbtn" id="btn-3"
+      data-label="CANDY"
+      data-msg="CANDY CONFIRMED&#10;PROCESSING…"
+      style="background-image:url('buttons/CANDY/CANDY_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+    <button class="vbtn" id="btn-4"
+      data-label="ENER-G"
+      data-msg="ENER-G CONFIRMED&#10;PROCESSING..."
+      style="background-image:url('buttons/ENER-G/ENER-G_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+      
+    <button
+      class="vbtn"
+      id="btn-1"
+      data-label="YES"
+      data-msg="CONFIRMED.&#10;PROCESSING..."
+      style="background-image:url('buttons/YES/YES_1_static.png')"
+      onmouseenter="onHover(this)"
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)">
+    </button>
+
+    <button class="vbtn" id="btn-2"
+      data-label="NO"
+      data-msg="CANCELLED.&#10;RETURNING..."
+      style="background-image:url('buttons/NO/NO_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+    <button class="vbtn" id="btn-3"
+      data-label="BACK"
+      data-msg="GOING BACK...&#10;PREV MENU"
+      style="background-image:url('buttons/BACK/BACK_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+    <button class="vbtn" id="btn-4"
+      data-label="NEXT"
+      data-msg="NEXT ITEM...&#10;LOADING..."
+      style="background-image:url('buttons/NEXT/NEXT_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+
+    <button
+      class="vbtn"
+      id="btn-1"
+      data-label="FUCK"
+      data-msg="CONFIRMED.&#10;PROCESSING..."
+      style="background-image:url('buttons/FUCK/FUCK_1_static.png')"
+      onmouseenter="onHover(this)"
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)">
+    </button>
+
+    <button class="vbtn" id="btn-2"
+      data-label="SHIT"
+      data-msg="CONFIRMED.&#10;PROCESSING..."
+      style="background-image:url('buttons/SHIT/SHIT_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+    <button class="vbtn" id="btn-3"
+      data-label="ASS"
+      data-msg="CONFIRMED.&#10;PROCESSING..."
+      style="background-image:url('buttons/ASS/ASS_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+    <button class="vbtn" id="btn-4"
+      data-label="TWAT"
+      data-msg="CONFIRMED.&#10;PROCESSING..."
+      style="background-image:url('buttons/TWAT/TWAT_1_static.png')"
+      onmouseenter="onHover(this)" 
+      onmouseleave="onUnhover(this)"
+      onclick="onPress(this)"></button>
+
+  </div>
+
+  <!-- STICKER STRIP — 4 random stickers from stick1.png–stick21.png -->
+  <div class="sticker-strip" id="sticker-strip">
+    <!-- Populated by JS on load -->
+  </div>
+
+</div><!-- end .machine -->
+
+<script>
+// ═══════════════════════════════════════════════
+// SCREEN TEXT
+// ═══════════════════════════════════════════════
+function setScreenText(msg) {
+  const el = document.getElementById('screen-body');
+  el.classList.add('fade');
+  setTimeout(() => {
+    el.innerHTML = msg + '<span class="cursor"></span>';
+    el.classList.remove('fade');
+  }, 180);
+}
+
+// ═══════════════════════════════════════════════
+// BUTTON IMAGES
+// ═══════════════════════════════════════════════
+function imgPath(btn, state) {
+  const label = btn.dataset.label;
+  return `buttons/${label}/${label}_${state}.png`;
+}
+function setImg(btn, state) {
+  btn.style.backgroundImage = `url('${imgPath(btn, state)}')`;
+}
+
+// ═══════════════════════════════════════════════
+// HOVER
+// ═══════════════════════════════════════════════
+function onHover(btn) {
+  if (!btn.classList.contains('pressing')) setImg(btn, '2_hover');
+}
+function onUnhover(btn) {
+  if (!btn.classList.contains('pressing')) setImg(btn, '1_static');
+}
+
+// ═══════════════════════════════════════════════
+// PRESS ANIMATION SEQUENCE
+// Timings in ms — adjust to taste
+// ═══════════════════════════════════════════════
+const T = { p25: 70, p75: 70, full: 700 };
+
+function onPress(btn) {
+  if (btn.classList.contains('pressing')) return;
+  btn.classList.add('pressing');
+  setScreenText(btn.dataset.msg);
+
+  setImg(btn, '3_press_25');
+  setTimeout(() => setImg(btn, '4_press_75'), T.p25);
+  setTimeout(() => setImg(btn, '5_full_press'), T.p25 + T.p75);
+
+  // Return to normal after briefly showing full press
+  setTimeout(() => {
+    setImg(btn, '1_static');
+    btn.classList.remove('pressing');
+  }, T.p25 + T.p75 + T.full);
+}
+
+// ═══════════════════════════════════════════════
+// UTILITY — trigger these from JS anytime
+// ═══════════════════════════════════════════════
+function showError(btn, msg) {
+  setImg(btn, '7_error');
+  setScreenText(msg || 'ERROR&#10;TRY AGAIN');
+  setTimeout(() => setImg(btn, '1_static'), 2000);
+}
+
+function showOutOfOrder(btn) {
+  setImg(btn, '8_out_of_order');
+  btn.disabled = true;
+  btn.style.cursor = 'not-allowed';
+}
+
+// ═══════════════════════════════════════════════
+// STICKER RANDOMIZER
+// Picks 4 unique stickers from sticker1.png–sticker21.png
+// and places them in the strip with slight random rotation
+// ═══════════════════════════════════════════════
+(function loadStickers() {
+  // All available sticker numbers — edit this list if any are missing
+  const all = Array.from({length: 21}, (_, i) => i + 1);
+
+  // Shuffle and pick 4
+  const shuffled = all.sort(() => Math.random() - 0.5);
+  const chosen = shuffled.slice(0, 4);
+
+  const strip = document.getElementById('sticker-strip');
+  chosen.forEach(n => {
+    const img = document.createElement('img');
+    img.className = 'sticker';
+    img.src = `Stickers/stick${n}.png`;
+    img.alt = `Stickers/stick ${n}`;
+    // Slight random rotation for organic feel (-6 to +6 degrees)
+    const rot = (Math.random() * 12 - 6).toFixed(1);
+    img.style.transform = `rotate(${rot}deg)`;
+    strip.appendChild(img);
+  });
+})();
+</script>
+
+</body>
+</html>

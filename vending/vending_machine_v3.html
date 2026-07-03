@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>NEO-KAMAKURA VENDING</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=VT323&family=Share+Tech+Mono&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #05080a;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px 0 40px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* ── TITLE ───────────────────────────────────── */
+  .title {
+    font-family: 'VT323', monospace;
+    font-size: 32px;
+    color: #5dcaa5;
+    letter-spacing: 6px;
+    text-shadow: 0 0 12px #5dcaa5, 0 0 24px #5dcaa544;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    /* CHANGE THIS TEXT WHENEVER YOU WANT */
+  }
+
+  /* ── MACHINE CONTAINER ───────────────────────── */
+  .machine {
+    position: relative;
+    width: min(95vw, 600px);
+    aspect-ratio: 896 / 1200;
+  }
+
+  .machine-bg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: cover;
+  }
+
+  /* ── ALL OVERLAYS use % positions relative to machine ── */
+  .screen-img {
+    position: absolute;
+    top: 4.5%;
+    left: 10%;
+    width: 58%;
+    height: 43%;
+    object-fit: fill;
+    pointer-events: none;
+  }
+
+  .screen-text-wrap {
+    position: absolute;
+    top: 6%;
+    left: 14%;
+    width: 49%;
+    height: 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 4% 5%;
+    overflow: visible;
+    pointer-events: none;
+  }
+
+  .screen-header {
+    font-family: 'VT323', monospace;
+    font-size: clamp(14px, 2.8vw, 22px);
+    color: #5dcaa5;
+    letter-spacing: 2px;
+    text-shadow: 0 0 8px #5dcaa5;
+    margin-bottom: 6px;
+    white-space: normal;
+    word-wrap: break-word;
+    max-width: 100%;
+  }
+
+  .screen-body {
+    font-family: 'VT323', monospace;
+    font-size: clamp(12px, 2.2vw, 18px);
+    color: #5dcaa5cc;
+    line-height: 1.55;
+    text-shadow: 0 0 5px #5dcaa566;
+    transition: opacity 0.15s ease;
+    white-space: pre-line;
+  }
+
+  .screen-body.fade { opacity: 0; }
+
+  .screen-scanlines {
+    position: absolute;
+    top: 6%;
+    left: 14%;
+    width: 49%;
+    height: 35%;
+    background: repeating-linear-gradient(
+      to bottom,
+      transparent 0px, transparent 3px,
+      rgba(0,0,0,0.12) 3px, rgba(0,0,0,0.12) 4px
+    );
+    pointer-events: none;
+    border-radius: 6%;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 1em;
+    background: #5dcaa5;
+    margin-left: 2px;
+    vertical-align: text-bottom;
+    animation: blink 1s step-end infinite;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  @keyframes flicker {
+    0%,89%,91%,93%,100% { opacity: 1; }
+    90% { opacity: 0.82; }
+    92% { opacity: 0.91; }
+  }
+  .screen-img { animation: flicker 7s infinite; }
+
+  /* ── BUTTON STACK ───────────────────────────────── */
+  .button-stack {
+    position: absolute;
+    top: 8%;
+    right: 8%;
+    width:  18%;
+    display: flex;
+    flex-direction: column;
+    gap: 40px
+  }
+
+  /* ── BUTTON VISUALS ─────────────────────────────── */
+  .vbtn {
+    width: 100%;
+    aspect-ratio: 338 / 170;
+    border: none;
+    background: none;
+    cursor: pointer;
+    padding: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: filter 0.08s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* ── TRANSITION OVERLAY ─────────────────────────── */
+  .transition-overlay {
+    position: absolute;
+    inset: 0;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    pointer-events: none;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.08s ease;
+  }
+
+  .transition-overlay.active {
+    opacity: 1;
+  }
+
+  .vbtn:focus-visible {
+    outline: 2px solid #5dcaa5;
+    outline-offset: 2px;
+  }
+
+  .vbtn.pressing { cursor: default; }
+
+  @keyframes glow-pulse {
+    0%,100% { filter: brightness(1); }
+    50%      { filter: brightness(1.35) drop-shadow(0 0 6px #a078ff); }
+  }
+  .vbtn.activated { animation: glow-pulse 0.5s ease-in-out; }
+
+  .sticker-strip {
+    position: absolute;
+    top: 53%;
+    left: 5%;
+    width: 85%;
+    height: 9%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    gap: 2%;
+    padding: 0 2%;
+  }
+
+  .sticker {
+    height: 100%;
+    width: auto;
+    max-width: 23%;
+    object-fit: contain;
+    filter:
+    brightness(1.05)
+    contrast(0.9)
+    saturate(0.75)
+    drop-shadow(0 1px 3px rgba(0,0,0,0.7));
+  }
+</style>
+</head>
+<body>
+
+<div class="title">NEO-KAMAKURA VENDING</div>
+
+<div class="machine">
+
+  <img class="machine-bg" src="vendingV2.png" alt="Vending Machine">
+  <img class="screen-img" src="screen.png" alt="Screen">
+  <div class="screen-scanlines"></div>
+
+  <div class="screen-text-wrap">
+    <div class="screen-header">▶ SELECT ITEM</div>
+    <div class="screen-body" id="screen-body">WAITING INPUT.<span class="cursor"></span></div>
+  </div>
+
+  <div class="button-stack">
+    <button class="vbtn" id="btn-1" aria-label="Button slot 1"></button>
+    <button class="vbtn" id="btn-2" aria-label="Button slot 2"></button>
+    <button class="vbtn" id="btn-3" aria-label="Button slot 3"></button>
+    <button class="vbtn" id="btn-4" aria-label="Button slot 4"></button>
+  </div>
+
+  <div class="sticker-strip" id="sticker-strip"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════════════
+// STATE GRAPH: MENUS define screens and available transitions
+// ═══════════════════════════════════════════════════════════════════════════
+// Each menu is a node in the state graph. Each button has a 'next' property
+// that points to the next menu state when pressed. This creates a DAG
+// allowing non-linear flows: A→B, A→C, B→D, etc.
+//
+// Button properties:
+// - label: button image folder name (buttons/LABEL/...)
+// - msg: screen message shown when pressed
+// - next: (string) target menu state after transition
+// - action: (optional) custom function called on press
+// - outOfOrder: (boolean) disable button and show out-of-order image
+// ═══════════════════════════════════════════════════════════════════════════
+
+const MENUS = {
+  selectItem: {
+    screen: '▶ SELECT ITEM',
+    body: 'WAITING INPUT.',
+    buttons: [
+      { label: 'CYBER-COLA', msg: 'CYBER-COLA CONFIRMED.&#10;PROCESSING...', next: 'confirm' },
+      { label: 'PILLS', msg: 'PILLS CONFIRMED.&#10;PROCESSING...', next: 'confirm' },
+      { label: 'ENER-G', msg: 'ENER-G CONFIRMED.&#10;PROCESSING...', next: 'confirm' },
+      { label: 'CANDY', msg: 'CANDY CONFIRMED.&#10;PROCESSING...', next: 'confirm' }
+    ]
+  },
+  confirm: {
+    screen: 'WE\'RE ACTUALLY OUT OF THAT.<br>SELECT SOMETHING ELSE?',
+    body: 'WAITING INPUT.',
+    buttons: [
+      { label: 'YES', msg: 'CONFIRMED.&#10;PROCESSING...', next: 'summon' },
+      { label: 'NO', msg: 'CANCELLED.&#10;RETURNING...', next: 'cancelled' },
+      { label: 'BACK', msg: 'GOING BACK...&#10;PREV MENU', next: 'selectItem', outOfOrder: true },
+      { label: 'NEXT', msg: 'NEXT ITEM...&#10;LOADING...', next: 'selectItem', outOfOrder: true  }
+    ]
+  },
+  cancelled: {
+    screen: 'TRANSACTION CANCELLED',
+    body: 'COWARD.',
+    buttons: [
+      { label: 'YES', msg: 'RESTARTING...', next: 'selectItem', outOfOrder: true },
+      { label: 'NO', msg: 'UNAVAILABLE', next: 'selectItem', outOfOrder: true },
+      { label: 'NEXT', msg: 'UNAVAILABLE', next: 'selectItem', outOfOrder: true },
+      { label: 'BACK', msg: 'RETURNING...&#10;RESTART MENU', next: 'selectItem' }
+    ]
+  },
+  summon: {
+    screen: '<br>WOULD YOU LIKE TO SUMMON NYARLATHOTEP?<br>THE CRAWLING CHAOS.<br> A DECEPTIVE MESSENGER WHO OFTEN TAKES HUMAN FORM.',
+    body: 'WAITING INPUT.',
+    buttons: [
+      { label: 'YES', msg: 'CONFIRMED.&#10;PROCESSING...', next: 'otw' },
+      { label: 'NO', msg: 'CANCELLED.&#10;RETURNING...', next: 'cancelled' },
+      { label: 'BACK', msg: 'GOING BACK...&#10;PREV MENU', next: 'selectItem', outOfOrder: true },
+      { label: 'NEXT', msg: 'NEXT ITEM...&#10;LOADING...', next: 'selectItem', outOfOrder: true  }
+    ]
+  },
+  otw: {
+    screen: 'NYARLATHOTEP WILL BE ARRIVING SHORTLY.<br>PLEASE STAND BY.',
+    body: 'WAITING INPUT.',
+    buttons: [
+      { label: 'FUCK', msg: 'CONFIRMED.&#10;PROCESSING...', next: 'ohno' },
+      { label: 'NO', msg: 'CANCELLED.&#10;RETURNING...', next: 'selectItem', outOfOrder: true },
+      { label: 'BACK', msg: 'GOING BACK...&#10;PREV MENU', next: 'selectItem', outOfOrder: true },
+      { label: 'NEXT', msg: 'NEXT ITEM...&#10;LOADING...', next: 'selectItem', outOfOrder: true  }
+    ]
+  },
+  ohno: {
+    screen: 'INDEED.',
+    body: 'GOODBYE',
+    buttons: [
+      { label: 'FUCK', msg: 'CONFIRMED.&#10;PROCESSING...', next: 'selectItem', outOfOrder: true },
+      { label: 'NO', msg: 'CANCELLED.&#10;RETURNING...', next: 'selectItem', outOfOrder: true },
+      { label: 'BACK', msg: 'GOING BACK...&#10;PREV MENU', next: 'selectItem', outOfOrder: true },
+      { label: 'NEXT', msg: 'NEXT ITEM...&#10;LOADING...', next: 'selectItem', outOfOrder: true  }
+    ]
+  }
+};
+
+// ═══════════════════════════════════════════════
+// PRESS ANIMATION SEQUENCE
+// Timings in ms — adjust to taste
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════════════════════════
+// TIMING & DOM ELEMENTS
+// ═══════════════════════════════════════════════════════════════════════════
+const T = { p25: 60, p75: 60, full: 700 };
+const screenHeader = document.querySelector('.screen-header');
+const screenBody = document.getElementById('screen-body');
+const buttonEls = Array.from(document.querySelectorAll('.button-stack .vbtn'));
+let currentMenu = 'selectItem';
+
+// ═══════════════════════════════════════════════════════════════════════════
+// APPLICATION CONTEXT: Tracks user choices and decisions through the flow
+// ═══════════════════════════════════════════════════════════════════════════
+// This object persists across menu transitions. Use it to remember:
+// - which item was selected
+// - user responses to prompts
+// - decision history (for conditional branching)
+//
+// Example usage in button action:
+//   action: (ctx) => { ctx.selectedItem = 'CYBER-COLA'; }
+// ═══════════════════════════════════════════════════════════════════════════
+const context = {
+  selectedItem: null,
+  lastResponse: null,
+  history: [] // track all button presses
+};
+
+
+// ═══════════════════════════════════════════════
+// BUTTON IMAGES
+// ═══════════════════════════════════════════════
+function getImagePath(label, state) {
+  return `buttons/${label}/${label}_${state}.png`;
+}
+
+// ═══════════════════════════════════════════════
+// SCREEN TEXT
+// ═══════════════════════════════════════════════
+function setScreenText(msg) {
+  screenBody.classList.add('fade');
+  setTimeout(() => {
+    screenBody.innerHTML = msg + '<span class="cursor"></span>';
+    screenBody.classList.remove('fade');
+  }, 180);
+}
+
+function setImg(btn, state) {
+  const label = btn.dataset.label;
+  btn.style.backgroundImage = `url('${getImagePath(label, state)}')`;
+}
+
+function setButtonState(btn, buttonData) {
+  btn.dataset.label = buttonData.label;
+  btn.dataset.msg = buttonData.msg || 'READY.';
+  btn.disabled = Boolean(buttonData.outOfOrder);
+  btn.style.cursor = btn.disabled ? 'not-allowed' : 'pointer';
+  btn.classList.toggle('pressing', false);
+  if (btn.disabled) {
+    btn.style.backgroundImage = `url('${getImagePath(buttonData.label, '8_out_of_order')}')`;
+  } else {
+    btn.style.backgroundImage = `url('${getImagePath(buttonData.label, '1_static')}')`;
+  }
+}
+
+function renderMenu(menuKey) {
+  const menu = MENUS[menuKey];
+  screenHeader.innerHTML = menu.screen;
+  setScreenText(menu.body || 'READY.');
+
+  buttonEls.forEach((btn, index) => {
+    const buttonData = menu.buttons[index] || { label: 'BACK', msg: 'UNAVAILABLE', outOfOrder: true };
+    setButtonState(btn, buttonData);
+  });
+}
+
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function getTransitionImage(step) {
+  return `buttons/transition/SLIDE_${step}.png`;
+}
+
+async function transitionButtons(menuKey) {
+  const overlays = buttonEls.map(btn => {
+    const overlay = document.createElement('div');
+    overlay.className = 'transition-overlay active';
+    btn.appendChild(overlay);
+    return overlay;
+  });
+
+  const coverSteps = ['1', '2', '3', '4'];
+  for (const step of coverSteps) {
+    overlays.forEach(overlay => {
+      overlay.style.backgroundImage = `url('${getTransitionImage(step)}')`;
+    });
+    await sleep(80);
+  }
+
+  currentMenu = menuKey;
+  renderMenu(currentMenu);
+
+  const revealSteps = ['3', '2', '1'];
+  for (const step of revealSteps) {
+    overlays.forEach(overlay => {
+      overlay.style.backgroundImage = `url('${getTransitionImage(step)}')`;
+    });
+    await sleep(80);
+  }
+
+  overlays.forEach(overlay => overlay.remove());
+}
+
+let isTransitioning = false;
+
+// ═══════════════════════════════════════════════
+// INTERACTIONS — user input and button responses
+// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+function onHover(btn) {
+  if (btn.disabled || btn.classList.contains('pressing')) return;
+  setImg(btn, '2_hover');
+}
+
+function onUnhover(btn) {
+  if (btn.disabled || btn.classList.contains('pressing')) return;
+  setImg(btn, '1_static');
+}
+
+async function onPress(btn) {
+  if (btn.disabled || btn.classList.contains('pressing') || isTransitioning) return;
+  btn.classList.add('pressing');
+  setScreenText(btn.dataset.msg);
+
+  setImg(btn, '3_press_25');
+  setTimeout(() => setImg(btn, '4_press_75'), T.p25);
+  setTimeout(() => setImg(btn, '5_full_press'), T.p25 + T.p75);
+
+  await sleep(T.p25 + T.p75 + T.full);
+
+  const buttonIndex = buttonEls.indexOf(btn);
+  const buttonData = MENUS[currentMenu].buttons[buttonIndex];
+
+  console.log('Button pressed:', buttonData?.label, 'Next:', buttonData?.next, 'Current menu:', currentMenu);
+
+  if (buttonData && !buttonData.outOfOrder) {
+    setImg(btn, '1_static');
+  }
+  btn.classList.remove('pressing');
+
+  // ═════════════════════════════════════════════════════════════════════════
+  // NON-LINEAR ROUTING: Use button.next property to determine next state
+  // ═════════════════════════════════════════════════════════════════════════
+  // Instead of hardcoding transitions, each button declares where it leads.
+  // This makes the flow graph visible in MENUS and allows easy branching.
+  // Each button can branch to different targets based on its 'next' property.
+  // ═════════════════════════════════════════════════════════════════════════
+
+  if (buttonData && buttonData.next) {
+    console.log('Transitioning to:', buttonData.next);
+    isTransitioning = true;
+
+    // Step 1: Execute custom action if defined
+    // Example: buttonData.action = (ctx) => { ctx.selectedItem = 'CYBER-COLA'; }
+    // This allows buttons to update state before transitioning
+    if (buttonData.action) {
+      buttonData.action(context);
+    }
+
+    // Step 2: Store this choice in history for debugging/conditional flows
+    // You can use context.history to build conditional menus that depend on
+    // previous user choices (e.g., "show retry if user clicked NO twice")
+    context.lastResponse = buttonData.label;
+    context.history.push({
+      menu: currentMenu,
+      button: buttonData.label,
+      timestamp: Date.now()
+    });
+
+    // Step 3: Transition to the next menu state
+    // transitionButtons() handles the slide animation and renderMenu()
+    // The 'next' property tells us which menu state to go to
+    const nextMenu = buttonData.next;
+    screenHeader.innerHTML = MENUS[nextMenu].screen;
+    setScreenText(MENUS[nextMenu].body || 'READY.');
+    await transitionButtons(nextMenu);
+    isTransitioning = false;
+  } else {
+    console.log('No next property found, no transition triggered');
+  }
+}
+
+function attachButtonListeners() {
+  buttonEls.forEach(btn => {
+    btn.addEventListener('mouseenter', () => onHover(btn));
+    btn.addEventListener('mouseleave', () => onUnhover(btn));
+    btn.addEventListener('click', () => onPress(btn));
+  });
+}
+
+
+// ═══════════════════════════════════════════════
+// STICKER RANDOMIZER
+// Picks 4 unique stickers from sticker1.png–sticker21.png
+// and places them in the strip with slight random rotation
+// ═══════════════════════════════════════════════
+(function loadStickers() {
+  const all = Array.from({ length: 21 }, (_, i) => i + 1);
+  const chosen = all.sort(() => Math.random() - 0.5).slice(0, 4);
+  const strip = document.getElementById('sticker-strip');
+  chosen.forEach(n => {
+    const img = document.createElement('img');
+    img.className = 'sticker';
+    img.src = `Stickers/stick${n}.png`;
+    img.alt = `Sticker ${n}`;
+    const rot = (Math.random() * 12 - 6).toFixed(1);
+    img.style.transform = `rotate(${rot}deg)`;
+    strip.appendChild(img);
+  });
+})();
+
+window.addEventListener('DOMContentLoaded', () => {
+  attachButtonListeners();
+  renderMenu(currentMenu);
+});
+</script>
+
+</body>
+</html>
