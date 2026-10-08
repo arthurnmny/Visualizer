@@ -3,283 +3,196 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Portfolio</title>
-<link rel="stylesheet" href="https://fonts.cdnfonts.com/css/ranade">
-<style>
-  :root {
-    --font-family-headline: 'Ranade', 'Arial Black', sans-serif;
-    --font-h1: 6.25rem/.82 var(--font-family-headline);
-  }
+<title>Tofutopia — Data cleaning and analysis for researchers</title>
+<meta name="description" content="Tofutopia cleans and analyzes research data for PhD students, labs, and research groups without an in-house data team.">
+<link rel="canonical" href="https://tofutopia.net/">
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Tofutopia">
+<meta property="og:title" content="Tofutopia — Data cleaning and analysis for researchers">
+<meta property="og:description" content="Tofutopia cleans and analyzes research data for PhD students, labs, and research groups without an in-house data team.">
+<meta property="og:url" content="https://tofutopia.net/">
 
-  body {
-    background: #ffffff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    font-family: 'Ranade', 'Arial Black', sans-serif;
-    overflow-x: hidden;
-    padding: 48px 32px 56px;
-  }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles/site.css">
 
-  /* ── Top meta info ── */
-  .meta {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    text-align: center;
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Tofutopia",
+  "legalName": "Tofutopia LLC",
+  "url": "https://tofutopia.net/",
+  "email": "arthury@tofutopia.net",
+  "telephone": "+1-206-779-8895",
+  "description": "Data cleaning and analysis for research partners.",
+  "founder": {
+    "@type": "Person",
+    "name": "Arthur Yang"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer support",
+    "name": "Arthur Yang",
+    "email": "arthury@tofutopia.net",
+    "telephone": "+1-206-779-8895"
   }
-  .meta__location {
-    font-size: 0.72rem;
-    font-weight: 700;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: #111;
-  }
-  .meta__email {
-    font-size: 0.68rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #aaa;
-  }
-
-  /* ── Main title ── */
-  .title {
-    font: var(--font-h1);
-    font-size: max(3.8rem, 7cqi);
-    max-width: 12em;
-    text-align: center;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-    color: #111;
-    line-height: 0.82;
-  }
-
-  /* ── Center cat ── */
-  .cat-wrap {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex: 0 0 auto;
-  }
-  #cat {
-    width: clamp(160px, 26vmin, 300px);
-    height: auto;
-    image-rendering: pixelated;
-    display: block;
-  }
-
-  /* ── Subtitle / descriptor ── */
-  .descriptor {
-    font-size: max(2.8rem, 5cqi);
-    font-weight: 700;
-    letter-spacing: -0.02em;
-    text-transform: uppercase;
-    text-align: center;
-    color: #d8d8d8;
-    line-height: 0.88;
-    max-width: 14em;
-  }
-
-  /* ── Buttons row ── */
-  .buttons {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    align-items: center;
-    gap: 24px 32px;
-    width: 100%;
-  }
-
-  /* ── Button CSS (uiverse.io) ── */
-  .type--A { --line_color: #555555; --back_color: #ffecf6; }
-  .type--B { --line_color: #1b1919; --back_color: #e9ecff; }
-  .type--C { --line_color: #00135c; --back_color: #defffa; }
-  .type--D { --line_color: #4a2000; --back_color: #fff3e0; }
-  .type--E { --line_color: #1a3300; --back_color: #f0ffe0; }
-
-  .button {
-    position: relative;
-    z-index: 0;
-    width: 200px;
-    height: 56px;
-    text-decoration: none;
-    font-size: 12px;
-    font-weight: bold;
-    color: var(--line_color);
-    letter-spacing: 2px;
-    transition: all 0.3s ease;
-    font-family: 'Ranade', 'Arial Black', sans-serif;
-    text-transform: uppercase;
-  }
-  .button__text {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-  }
-  .button::before,
-  .button::after,
-  .button__text::before,
-  .button__text::after {
-    content: "";
-    position: absolute;
-    height: 3px;
-    border-radius: 2px;
-    background: var(--line_color);
-    transition: all 0.5s ease;
-  }
-  .button::before { top:0; left:54px; width:calc(100% - 56px * 2 - 16px); }
-  .button::after  { top:0; right:54px; width:8px; }
-  .button__text::before { bottom:0; right:54px; width:calc(100% - 56px * 2 - 16px); }
-  .button__text::after  { bottom:0; left:54px; width:8px; }
-  .button__line {
-    position: absolute; top:0; width:56px; height:100%; overflow:hidden;
-  }
-  .button__line::before {
-    content:""; position:absolute; top:0; width:150%; height:100%;
-    box-sizing:border-box; border-radius:300px; border:solid 3px var(--line_color);
-  }
-  .button__line:nth-child(1),
-  .button__line:nth-child(1)::before { left:0; }
-  .button__line:nth-child(2),
-  .button__line:nth-child(2)::before { right:0; }
-
-  .button:hover { letter-spacing: 6px; }
-  .label--default,
-  .label--hover {
-    position: absolute;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-  }
-
-  .label--hover {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-
-  .button:hover .label--default {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-
-  .button:hover .label--hover {
-    opacity: 1;
-    transform: translateY(0);
-  }
-  .button:hover .label--hover {
-  letter-spacing: 2px;
-  }
-  .label--hover {
-  opacity: 0;
-  transform: translateY(6px);
-  text-align: center;
-  width: 100%;
-  }
-  .button:hover::before,
-  .button:hover .button__text::before { width:8px; }
-  .button:hover::after,
-  .button:hover .button__text::after  { width:calc(100% - 56px * 2 - 16px); }
-
-  .button__drow1, .button__drow2 {
-    position:absolute; z-index:-1; border-radius:16px; transform-origin:16px 16px;
-  }
-  .button__drow1 { top:-16px; left:40px; width:32px; height:0; transform:rotate(30deg); }
-  .button__drow2 { top:44px; left:77px; width:32px; height:0; transform:rotate(-127deg); }
-  .button__drow1::before, .button__drow1::after,
-  .button__drow2::before, .button__drow2::after { content:""; position:absolute; }
-  .button__drow1::before { bottom:0; left:0; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(-60deg); }
-  .button__drow1::after  { top:-10px; left:45px; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(69deg); }
-  .button__drow2::before { bottom:0; left:0; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(-146deg); }
-  .button__drow2::after  { bottom:26px; left:-40px; width:0; height:32px; border-radius:16px; transform-origin:16px 16px; transform:rotate(-262deg); }
-  .button__drow1, .button__drow1::before, .button__drow1::after,
-  .button__drow2, .button__drow2::before, .button__drow2::after { background:var(--back_color); }
-
-  .button:hover .button__drow1         { animation:drow1 ease-in 0.06s; animation-fill-mode:forwards; }
-  .button:hover .button__drow1::before { animation:drow2 linear 0.08s 0.06s; animation-fill-mode:forwards; }
-  .button:hover .button__drow1::after  { animation:drow3 linear 0.03s 0.14s; animation-fill-mode:forwards; }
-  .button:hover .button__drow2         { animation:drow4 linear 0.06s 0.2s;  animation-fill-mode:forwards; }
-  .button:hover .button__drow2::before { animation:drow3 linear 0.03s 0.26s; animation-fill-mode:forwards; }
-  .button:hover .button__drow2::after  { animation:drow5 linear 0.06s 0.32s; animation-fill-mode:forwards; }
-
-  @keyframes drow1 { 0%{height:0} 100%{height:100px} }
-  @keyframes drow2 { 0%{width:0;opacity:0} 10%{opacity:0} 11%{opacity:1} 100%{width:120px} }
-  @keyframes drow3 { 0%{width:0} 100%{width:80px} }
-  @keyframes drow4 { 0%{height:0} 100%{height:120px} }
-  @keyframes drow5 { 0%{width:0} 100%{width:124px} }
-</style>
+}
+</script>
 </head>
 <body>
 
-  <!-- Top: location + email -->
-  <div class="meta">
-    <span class="meta__location">Tofutopia</span>
-    <span class="meta__email">Seattle, Washington</span>
+<header class="site-header">
+  <div class="container site-header__inner">
+    <a class="brand" href="index.html">
+      <svg class="brand__mark" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <rect x="0" y="12" width="4" height="8" rx="1.5" fill="currentColor"/>
+        <rect x="8" y="6" width="4" height="14" rx="1.5" fill="currentColor"/>
+        <rect x="16" y="0" width="4" height="20" rx="1.5" fill="currentColor"/>
+      </svg>
+      Tofutopia
+    </a>
+    <nav class="nav" aria-label="Main">
+      <a href="index.html" aria-current="page">Home</a>
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
   </div>
+</header>
 
-  <!-- Main name title -->
-  <h1 class="title">Arthur Yang</h1>
-  <!-- Pixel cat -->
-  
-  <div class="cat-wrap"></div>
-    <img id="cat" src="tofu.jpg" alt="pixel cat">
+<main>
+
+  <section class="hero">
+    <div class="container">
+      <p class="eyebrow">Data cleaning &amp; analysis</p>
+      <h1>Clean data, ready for your analysis.</h1>
+      <p class="lede">
+        Tofutopia works with PhD students, labs, and research groups who have a
+        dataset and a research question — but no dedicated data team. You bring
+        the data and the question; we handle getting it into a state you can
+        actually analyze.
+      </p>
+      <div class="btn-row">
+        <a class="btn btn--primary" href="contact.html">Get in touch</a>
+        <a class="btn btn--ghost" href="services.html">See services</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="motif-section">
+    <div class="container">
+      <div class="motif-band">
+        <img class="motif" src="assets/site/motif.svg" width="640" height="260"
+             alt="Illustration: a jumbled, uneven grid of grey cells on the left resolving into a neatly aligned grid on the right.">
+        <p class="motif-caption">Messy data in. Analysis-ready data out.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>You have the data. You don't need to become a data engineer.</h2>
+        <p>
+          Research data rarely arrives in a usable shape. Tofutopia is built for
+          people whose expertise is in their field, not in wrangling spreadsheets.
+        </p>
+      </div>
+      <ul class="tick-list">
+        <li>Datasets that arrived messy, incomplete, or split across incompatible files</li>
+        <li>Getting data into analysis-ready shape before statistics or modelling</li>
+        <li>A careful review of data quality before results are written up</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <h2>What we do</h2>
+        <p>Three ways to work together.</p>
+      </div>
+
+      <div class="card-grid">
+        <a class="card" href="services.html#cleaning">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M3 4h18l-7 8v6l-4 2v-8L3 4z"/>
+          </svg>
+          <span class="card__num">01</span>
+          <h3>Data cleaning</h3>
+          <p>
+            Removing duplicates, standardizing formats, handling missing values
+            and type mismatches, and merging or reshaping data from multiple
+            sources into one consistent table.
+          </p>
+          <span class="card__link">Read more &rarr;</span>
+        </a>
+
+        <a class="card" href="services.html#analysis">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <line x1="3.5" y1="20.5" x2="20.5" y2="20.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <rect x="5" y="12" width="3.6" height="6.5" rx="1" fill="currentColor" opacity=".5"/>
+            <rect x="10.2" y="7.5" width="3.6" height="11" rx="1" fill="currentColor" opacity=".75"/>
+            <rect x="15.4" y="3.5" width="3.6" height="15" rx="1" fill="currentColor"/>
+          </svg>
+          <span class="card__num">02</span>
+          <h3>Data analysis</h3>
+          <p>
+            Validation and quality checks, anomaly detection, statistical
+            analysis, and pattern recognition — the analysis work that follows
+            once the data is clean.
+          </p>
+          <span class="card__link">Read more &rarr;</span>
+        </a>
+
+        <a class="card" href="services.html#custom">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <line x1="3.5" y1="7.5" x2="20.5" y2="7.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="3.5" y1="16.5" x2="20.5" y2="16.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+            <circle cx="9" cy="7.5" r="2.6" fill="currentColor"/>
+            <circle cx="15" cy="16.5" r="2.6" fill="currentColor"/>
+          </svg>
+          <span class="card__num">03</span>
+          <h3>Custom engagements</h3>
+          <p>
+            One-off cleanups, ongoing support, or work that fits into the
+            workflow and tooling you already use.
+          </p>
+          <span class="card__link">Read more &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta-band">
+    <div class="container">
+      <div>
+        <h2>Tell us about your dataset.</h2>
+        <p>
+          A short description of the data and what you need from it is enough to
+          start the conversation.
+        </p>
+      </div>
+      <a class="btn btn--primary" href="contact.html">Get in touch</a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="container site-footer__inner">
+    <span>&copy; 2026 Tofutopia LLC</span>
+    <nav aria-label="Footer">
+      <a href="index.html">Home</a>
+      <a href="services.html">Services</a>
+      <a href="about.html">About</a>
+      <a href="contact.html">Contact</a>
+    </nav>
   </div>
-
-  <!-- Ghost descriptor text behind/below cat -->
-  <p class="descriptor">Nerds Clusters Enjoyer</p>
-
-  <!-- Nav buttons -->
-  <nav class="buttons">
-    <a class="button type--A" href="/visualizer.html">
-      <div class="button__line"></div>
-      <div class="button__line"></div>
-      <span class="button__text">Visualizer</span>
-      <div class="button__drow1"></div>
-      <div class="button__drow2"></div>
-    </a>
-    <a class="button type--B" href="/baby.html">
-      <div class="button__line"></div>
-      <div class="button__line"></div>
-      <span class="button__text">Baby Registry</span>
-      <div class="button__drow1"></div>
-      <div class="button__drow2"></div>
-    </a>
-    <a class="button type--C" href="vending\vending_machine_v3.html">
-      <div class="button__line"></div>
-      <div class="button__line"></div>
-      <span class="button__text">
-      <span class="label--default">VENDING</span>
-      <span class="label--hover">VENDING STORY</span>
-      </span>
-      <div class="button__drow1"></div>
-      <div class="button__drow2"></div>
-    </a>
-    <a class="button type--D" href="/taco-emporium">
-      <div class="button__line"></div>
-      <div class="button__line"></div>
-      <span class="button__text">Taco Emporium</span>
-      <div class="button__drow1"></div>
-      <div class="button__drow2"></div>
-    </a>
-    <a class="button type--E" href="/uncool-ghoul">
-      <div class="button__line"></div>
-      <div class="button__line"></div>
-      <span class="button__text">Uncool Ghoul</span>
-      <div class="button__drow1"></div>
-      <div class="button__drow2"></div>
-    </a>
-    <a class="button type--A" href="dotabowl-2026.html">
-      <div class="button__line"></div>
-      <div class="button__line"></div>
-      <span class="button__text">DOTA TOURNAMENT 2026</span>
-      <div class="button__drow1"></div>
-      <div class="button__drow2"></div>
-    </a>
-  </nav>
+</footer>
 
 </body>
 </html>

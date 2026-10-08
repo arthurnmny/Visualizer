@@ -1,0 +1,31 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "redirects": [
+    { "source": "/portfolio.html", "destination": "/", "permanent": false },
+    { "source": "/portfolio-home.html", "destination": "/", "permanent": false },
+    { "source": "/visualizer.html", "destination": "/", "permanent": false },
+    { "source": "/baby.html", "destination": "/", "permanent": false },
+    { "source": "/babystatus.html", "destination": "/", "permanent": false },
+    { "source": "/baby-admin.html", "destination": "/", "permanent": false },
+    { "source": "/letsbetonit.html", "destination": "/", "permanent": false },
+    { "source": "/feedback-and-bets.html", "destination": "/", "permanent": false },
+    { "source": "/dotabowl-2026.html", "destination": "/", "permanent": false },
+    { "source": "/vending/(.*)", "destination": "/", "permanent": false },
+    { "source": "/api/bets", "destination": "/", "permanent": false },
+    { "source": "/api/baby-feedback", "destination": "/", "permanent": false }
+  ],
+  "headers": [
+    {
+      "source": "/(portfolio|portfolio-home|visualizer|baby|babystatus|baby-admin|letsbetonit|feedback-and-bets|dotabowl-2026)\\.html",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    },
+    {
+      "source": "/vending/(.*)",
+      "headers": [
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow" }
+      ]
+    }
+  ]
+}

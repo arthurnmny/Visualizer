@@ -1,0 +1,66 @@
+<svg viewBox="0 0 640 260" width="640" height="260" role="img" xmlns="http://www.w3.org/2000/svg">
+<title id="motif-t">Messy data becoming clean, aligned data</title>
+<desc id="motif-d">A jittered, uneven grid of grey cells on the left resolves into a perfectly aligned indigo grid on the right.</desc>
+<g fill="#b9bcc6">
+<rect x="39.4" y="62.8" width="22" height="22" rx="2" opacity="0.64" transform="rotate(13.6 50.4 73.8)"/>
+<rect x="69.0" y="57.6" width="22" height="22" rx="2" opacity="0.7" transform="rotate(0.4 80.0 68.6)"/>
+<rect x="91.1" y="59.2" width="22" height="22" rx="2" opacity="0.77" transform="rotate(-13.1 102.1 70.2)"/>
+<rect x="118.5" y="68.8" width="22" height="22" rx="2" opacity="0.71" transform="rotate(14.9 129.5 79.8)"/>
+<rect x="157.9" y="63.2" width="22" height="22" rx="2" opacity="0.23" transform="rotate(0.9 168.9 74.2)"/>
+<rect x="147.9" y="55.2" width="22" height="22" rx="2" opacity="0.47" transform="rotate(0.9 158.9 66.2)"/>
+<rect x="176.9" y="55.4" width="22" height="22" rx="2" opacity="0.63" transform="rotate(-1.2 187.9 66.4)"/>
+<rect x="40.2" y="92.0" width="22" height="22" rx="2" opacity="0.71" transform="rotate(-0.0 51.2 103.0)"/>
+<rect x="65.3" y="97.0" width="22" height="22" rx="2" opacity="0.79" transform="rotate(15.9 76.3 108.0)"/>
+<rect x="93.8" y="86.2" width="22" height="22" rx="2" opacity="0.48" transform="rotate(-6.8 104.8 97.2)"/>
+<rect x="122.8" y="94.9" width="22" height="22" rx="2" opacity="0.83" transform="rotate(-3.6 133.8 105.9)"/>
+<rect x="146.0" y="85.9" width="22" height="22" rx="2" opacity="0.64" transform="rotate(13.1 157.0 96.9)"/>
+<rect x="178.8" y="84.0" width="22" height="22" rx="2" opacity="0.76" transform="rotate(4.1 189.8 95.0)"/>
+<rect x="45.0" y="123.7" width="22" height="22" rx="2" opacity="0.38" transform="rotate(14.9 56.0 134.7)"/>
+<rect x="35.0" y="115.7" width="22" height="22" rx="2" opacity="0.75" transform="rotate(14.9 46.0 126.7)"/>
+<rect x="75.0" y="120.4" width="22" height="22" rx="2" opacity="0.39" transform="rotate(-14.1 86.0 131.4)"/>
+<rect x="65.0" y="112.4" width="22" height="22" rx="2" opacity="0.77" transform="rotate(-14.1 76.0 123.4)"/>
+<rect x="106.7" y="125.3" width="22" height="22" rx="2" opacity="0.37" transform="rotate(-9.9 117.7 136.3)"/>
+<rect x="96.7" y="117.3" width="22" height="22" rx="2" opacity="0.74" transform="rotate(-9.9 107.7 128.3)"/>
+<rect x="125.7" y="112.6" width="22" height="22" rx="2" opacity="0.54" transform="rotate(-2.5 136.7 123.6)"/>
+<rect x="157.7" y="122.2" width="22" height="22" rx="2" opacity="0.8" transform="rotate(-6.3 168.7 133.2)"/>
+<rect x="178.7" y="123.0" width="22" height="22" rx="2" opacity="0.49" transform="rotate(4.5 189.7 134.0)"/>
+<rect x="36.6" y="142.6" width="22" height="22" rx="2" opacity="0.58" transform="rotate(8.7 47.6 153.6)"/>
+<rect x="62.9" y="140.3" width="22" height="22" rx="2" opacity="0.55" transform="rotate(2.6 73.9 151.3)"/>
+<rect x="94.5" y="145.3" width="22" height="22" rx="2" opacity="0.64" transform="rotate(14.7 105.5 156.3)"/>
+<rect x="128.4" y="141.6" width="22" height="22" rx="2" opacity="0.81" transform="rotate(-11.1 139.4 152.6)"/>
+<rect x="159.0" y="149.7" width="22" height="22" rx="2" opacity="0.41" transform="rotate(7.7 170.0 160.7)"/>
+<rect x="149.0" y="141.7" width="22" height="22" rx="2" opacity="0.83" transform="rotate(7.7 160.0 152.7)"/>
+<rect x="195.4" y="159.4" width="22" height="22" rx="2" opacity="0.31" transform="rotate(3.3 206.4 170.4)"/>
+<rect x="185.4" y="151.4" width="22" height="22" rx="2" opacity="0.62" transform="rotate(3.3 196.4 162.4)"/>
+</g>
+<g stroke="#8b909c" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
+<line x1="248" y1="130" x2="372" y2="130"/>
+<polyline points="358,116 372,130 358,144"/>
+</g>
+<g fill="#4f46e5">
+<rect x="424" y="62" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="452" y="62" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="480" y="62" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="508" y="62" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="536" y="62" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="564" y="62" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="424" y="90" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="452" y="90" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="480" y="90" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="508" y="90" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="536" y="90" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="564" y="90" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="424" y="118" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="452" y="118" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="480" y="118" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="508" y="118" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="536" y="118" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="564" y="118" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="424" y="146" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="452" y="146" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="480" y="146" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="508" y="146" width="22" height="22" rx="2" opacity="0.45"/>
+<rect x="536" y="146" width="22" height="22" rx="2" opacity="0.9"/>
+<rect x="564" y="146" width="22" height="22" rx="2" opacity="0.9"/>
+</g>
+</svg>
